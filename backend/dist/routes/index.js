@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.apiRouter = void 0;
+const express_1 = require("express");
+const health_1 = require("./health");
+const players_1 = require("./players");
+const stats_1 = require("./stats");
+const tournaments_1 = require("./tournaments");
+exports.apiRouter = (0, express_1.Router)();
+exports.apiRouter.use(health_1.healthRouter);
+exports.apiRouter.use(players_1.playersRouter);
+exports.apiRouter.use(stats_1.statsRouter);
+exports.apiRouter.use(tournaments_1.tournamentsRouter);

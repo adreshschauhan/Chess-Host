@@ -1,0 +1,66 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --text: rgba(245, 242, 230, 0.95);
+  --muted: rgba(245, 242, 230, 0.55);
+
+  /* Chess dark theme */
+  --bg: #090704;
+  --bg-grad-1: rgba(212, 175, 55, 0.1);
+  --bg-grad-2: rgba(180, 140, 40, 0.07);
+  --board-a: rgba(212, 175, 55, 0.048);
+  --board-b: rgba(0, 0, 0, 0);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --text: rgba(20, 16, 8, 0.92);
+  --muted: rgba(20, 16, 8, 0.55);
+
+  /* Parchment / ivory board for light mode */
+  --bg: #ede8d5;
+  --bg-grad-1: rgba(212, 175, 55, 0.22);
+  --bg-grad-2: rgba(180, 140, 40, 0.12);
+  --board-a: rgba(20, 16, 8, 0.07);
+  --board-b: rgba(255, 255, 255, 0);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(900px 450px at 15% 0%, var(--bg-grad-1), transparent),
+    radial-gradient(700px 400px at 85% 20%, var(--bg-grad-2), transparent),
+    repeating-conic-gradient(from 45deg, var(--board-a) 0 25%, var(--board-b) 0 50%) 0 0 / 56px 56px,
+    var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Chess tournament typography — headings use Cinzel serif */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Cinzel", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  letter-spacing: 0.03em;
+}
