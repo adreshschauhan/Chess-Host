@@ -1,176 +1,232 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BarChart3, FileDown, Shield, Swords, Trophy, Users } from "lucide-react";
+import { Shield, Trophy } from "lucide-react";
 import { isAdmin } from "../api";
 import ThemeToggle from "../components/ThemeToggle";
-import { getPublicUrl } from "../runtimeConfig";
+
+type PieceSpec = { symbol: string; col: number; row: number; anim: string; delay?: string };
+
+const SLIDES: Array<{ title: string; sub: string; accent: string; pieces: PieceSpec[] }> = [
+  {
+    title: "Fair Pairings",
+    sub: "Fair matchmaking — every round",
+    accent: "#d4af37",
+    pieces: [
+      { symbol: "♞", col: 3, row: 3, anim: "pieceHop" },
+      { symbol: "♟", col: 4, row: 4, anim: "pieceBob" },
+      { symbol: "♟", col: 5, row: 4, anim: "pieceBob", delay: "0.4s" },
+      { symbol: "♖", col: 7, row: 6, anim: "piecePulse" },
+      { symbol: "♙", col: 2, row: 5, anim: "pieceBob", delay: "0.2s" },
+      { symbol: "♛", col: 5, row: 2, anim: "piecePulse", delay: "0.6s" },
+      { symbol: "♔", col: 7, row: 7, anim: "kingMove" },
+      { symbol: "♚", col: 4, row: 1, anim: "kingMove", delay: "0.3s" },
+    ],
+  },
+  {
+    title: "Live Standings",
+    sub: "Real-time scores as results arrive",
+    accent: "#7ec8e3",
+    pieces: [
+      { symbol: "♚", col: 5, row: 7, anim: "kingMove" },
+      { symbol: "♔", col: 4, row: 1, anim: "kingMove", delay: "0.5s" },
+      { symbol: "♜", col: 1, row: 4, anim: "rookSlide" },
+      { symbol: "♝", col: 6, row: 3, anim: "bishopDiag" },
+      { symbol: "♟", col: 3, row: 5, anim: "pieceBob" },
+      { symbol: "♙", col: 6, row: 2, anim: "pieceBob", delay: "0.3s" },
+      { symbol: "♕", col: 3, row: 3, anim: "queenSweep" },
+      { symbol: "♘", col: 2, row: 6, anim: "pieceHop", delay: "0.4s" },
+    ],
+  },
+  {
+    title: "Export Reports",
+    sub: "Download tournament data in one click",
+    accent: "#b5e7a0",
+    pieces: [
+      { symbol: "♔", col: 7, row: 7, anim: "checkGlow" },
+      { symbol: "♛", col: 5, row: 5, anim: "queenSweep" },
+      { symbol: "♖", col: 7, row: 3, anim: "rookSlide", delay: "0.2s" },
+      { symbol: "♚", col: 8, row: 8, anim: "checkGlow", delay: "0.15s" },
+      { symbol: "♟", col: 7, row: 6, anim: "pieceBob" },
+      { symbol: "♟", col: 6, row: 7, anim: "pieceBob", delay: "0.35s" },
+      { symbol: "♗", col: 4, row: 4, anim: "bishopDiag", delay: "0.25s" },
+    ],
+  },
+];
+
+const NAV_ITEMS = [
+  { piece: "♚", label: "Dashboard", to: "/dashboard", desc: "Leaderboards · Active tournaments · Highlights" },
+  { piece: "♞", label: "Players", to: "/players", desc: "Player profiles · ELO ratings · Match history" },
+  { piece: "♛", label: "Stats", to: "/stats", desc: "Winning streaks · Giant killers · Legends board" },
+  { piece: "♜", label: "Admin", to: "/admin", desc: "Create tournaments · Generate rounds · Reports" },
+];
 
 export default function LandingPage() {
   const admin = isAdmin();
-  const publicUrl = getPublicUrl();
-  const [copied, setCopied] = useState(false);
+  const [slide, setSlide] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
 
-  async function copyPublicUrl() {
-    if (!publicUrl) return;
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } catch {
-      const el = document.createElement("textarea");
-      el.value = publicUrl;
-      el.setAttribute("readonly", "true");
-      el.style.position = "absolute";
-      el.style.left = "-9999px";
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    }
+  useEffect(() => {
+    let timeoutId: number;
+    const intervalId = setInterval(() => {
+      setTransitioning(true);
+      timeoutId = window.setTimeout(() => {
+        setSlide((s) => (s + 1) % SLIDES.length);
+        setTransitioning(false);
+      }, 450);
+    }, 5000);
+    return () => {
+      clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  function goTo(i: number) {
+    if (i === slide || transitioning) return;
+    setTransitioning(true);
+    window.setTimeout(() => {
+      setSlide(i);
+      setTransitioning(false);
+    }, 450);
   }
 
-  return (
-    <div className="container">
-      <header className="header">
-        <div>
-          <h1 style={{ margin: 0 }}>Chess Host</h1>
-          <div className="muted">Tournament hosting for clubs & communities</div>
-        </div>
+  const cur = SLIDES[slide];
 
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+  return (
+    <div className="landingRoot">
+      {/* Ambient floating background pieces */}
+      <div className="landingAmbient" aria-hidden="true">
+        {"♟♞♝♜♛♚♙♘♗♖♕♔".split("").map((p, i) => (
+          <span
+            key={i}
+            className="ambientPiece"
+            style={{
+              left: `${(i * 7.9 + 3) % 98}%`,
+              top: `${(i * 13.1 + 5) % 88}%`,
+              fontSize: `${20 + (i % 3) * 14}px`,
+              animationDelay: `${i * 0.8}s`,
+              animationDuration: `${9 + (i % 5) * 2}s`,
+            }}
+          >
+            {p}
+          </span>
+        ))}
+      </div>
+
+      {/* Header */}
+      <header className="landingHeader">
+        <div className="landingBrand">
+          <span className="landingBrandPiece">♔</span>
+          <div>
+            <div className="landingBrandName"> C-PAT CHESS ARENA</div>
+            <div className="landingBrandTagline">Chess Tournament Platform</div>
+          </div>
+        </div>
+        <div className="landingHeaderNav">
           <ThemeToggle />
           <Link className="btn" to="/dashboard">
-            <Trophy size={18} />
-            Open App
-          </Link>
-          <Link className="btn" to="/players">
-            <Users size={18} />
-            Players
-          </Link>
-          <Link className="btn" to="/stats">
-            <BarChart3 size={18} />
-            Stats
+            <Trophy size={16} /> Open App
           </Link>
           {admin ? (
             <Link className="btn" to="/admin">
-              <Shield size={18} />
-              Admin
+              <Shield size={16} /> Admin
             </Link>
           ) : (
             <Link className="btn" to="/admin/login">
-              <Shield size={18} />
-              Admin Login
+              <Shield size={16} /> Login
             </Link>
           )}
         </div>
       </header>
 
-      <section className="hero">
-        <div className="heroTitle">Host Swiss chess tournaments in minutes.</div>
-        <div className="heroLead">
-          Create multiple tournaments at the same time, manage participants, generate Swiss rounds, submit results, and export reports — all with a
-          clean dashboard built for tournament directors.
-        </div>
-
-        <div className="heroGrid">
-          <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>What you can do</div>
-            <div className="stack">
-              <div className="row">
-                <span className="muted">Create tournament</span>
-                <span className="kbd">Admin</span>
-              </div>
-              <div className="row">
-                <span className="muted">Add participants</span>
-                <span className="kbd">UI + Import</span>
-              </div>
-              <div className="row">
-                <span className="muted">Generate rounds</span>
-                <span className="kbd">Swiss</span>
-              </div>
-              <div className="row">
-                <span className="muted">Track standings</span>
-                <span className="kbd">Live</span>
-              </div>
-              <div className="row">
-                <span className="muted">Export reports</span>
-                <span className="kbd">CSV</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>Quick start</div>
-            <div className="stack">
-              <div>
-                1) Open the app dashboard → <Link to="/dashboard">Dashboard</Link>
-              </div>
-              <div>
-                2) If you’re an admin, login with your token → <Link to="/admin/login">Admin Login</Link>
-              </div>
-              <div>3) Create a tournament, add players, and generate Round 1.</div>
-              <div className="muted">Tip: Import participants using JSON/CSV/XLSX.</div>
-            </div>
+      {/* Hero + Carousel */}
+      <section className="landingHero">
+        <div className="landingHeroLeft">
+          <div className="landingHeroEyebrow">♟ Chess · ELO</div>
+          <h1 className="landingHeroTitle">
+            Host. Pair.
+            <br />
+            Conquer.
+          </h1>
+          <p className="landingHeroSub">
+            Create Chess tournaments, generate fair pairings, track live standings and export results — built for C-DAC communities by C-DAC Patna.
+          </p>
+          <div className="landingHeroBtns">
+            <Link className="btn primary landingHeroBtn" to="/dashboard">
+              Open Dashboard
+            </Link>
+            {!admin && (
+              <Link className="btn landingHeroBtn" to="/admin/login">
+                Admin Login
+              </Link>
+            )}
           </div>
         </div>
-      </section>
 
-      <section style={{ marginTop: 16 }}>
-        <div className="card" style={{ margin: 0 }}>
-          <div style={{ fontWeight: 800, marginBottom: 8 }}>Public access</div>
-          <div className="muted" style={{ marginBottom: 10 }}>
-            Share this link so anyone can open your app.
-          </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-            <div className="kbd" style={{ padding: "8px 10px" }}>
-              {publicUrl || "(open the app to detect URL)"}
+        {/* 3D Board Carousel */}
+        <div className="landingCarouselWrap">
+          <div className="carouselViewport">
+            <div className={`carouselPanel ${transitioning ? "carouselExit" : "carouselEnter"}`}>
+              <div className="board3DPerspective">
+                <div className="board3DGrid">
+                  {Array.from({ length: 64 }, (_, idx) => {
+                    const col = (idx % 8) + 1;
+                    const row = Math.floor(idx / 8) + 1;
+                    const light = (col + row) % 2 === 0;
+                    const piece = cur.pieces.find((p) => p.col === col && p.row === row);
+                    return (
+                      <div key={idx} className={`boardCell ${light ? "bcLight" : "bcDark"}`}>
+                        {piece && (
+                          <span className={`boardPiece bp-${piece.anim}`} style={{ animationDelay: piece.delay ?? "0s", color: cur.accent }}>
+                            {piece.symbol}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="carouselCaption">
+                <span className="carouselCaptionTitle">{cur.title}</span>
+                <span className="carouselCaptionSub">{cur.sub}</span>
+              </div>
             </div>
-            <button className="btn primary" type="button" onClick={() => void copyPublicUrl()} disabled={!publicUrl}>
-              {copied ? "Copied" : "Copy"}
-            </button>
           </div>
-          <div className="muted" style={{ marginTop: 10 }}>
-            Tip: If this shows <span className="kbd">localhost</span>, other devices won’t reach it — replace it with your machine’s LAN IP (same
-            port).
+
+          <div className="carouselDots">
+            {SLIDES.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`carouselDot ${i === slide ? "carouselDotActive" : ""}`}
+                onClick={() => goTo(i)}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
           </div>
         </div>
       </section>
 
-      <section style={{ marginTop: 16 }}>
-        <div className="featureGrid">
-          <div className="feature">
-            <div className="featureTitle">
-              <Swords size={18} />
-              Swiss Pairing
-            </div>
-            <div className="muted" style={{ marginTop: 8 }}>
-              Generate rounds and record results while keeping standings updated.
-            </div>
-          </div>
-
-          <div className="feature">
-            <div className="featureTitle">
-              <Users size={18} />
-              Player Profiles
-            </div>
-            <div className="muted" style={{ marginTop: 8 }}>
-              View per-player summary, history, and rating at a glance.
-            </div>
-          </div>
-
-          <div className="feature">
-            <div className="featureTitle">
-              <FileDown size={18} />
-              Reports
-            </div>
-            <div className="muted" style={{ marginTop: 8 }}>
-              Export tournament reports as CSV for sharing and recordkeeping.
-            </div>
-          </div>
+      {/* Sidebar Nav Highlights */}
+      <section className="landingNav">
+        <h2 className="landingNavTitle">Everything in one place</h2>
+        <div className="landingNavGrid">
+          {NAV_ITEMS.map((item, idx) => (
+            <Link key={item.label} to={item.to} className="landingNavCard" style={{ animationDelay: `${idx * 0.12}s` }}>
+              <div className="landingNavPiece" style={{ animationDelay: `${idx * 0.5}s` }}>
+                {item.piece}
+              </div>
+              <div className="landingNavLabel">{item.label}</div>
+              <div className="landingNavDesc">{item.desc}</div>
+            </Link>
+          ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="landingFooter">
+        <span className="landingFooterPiece">♔</span>
+        <span>© {new Date().getFullYear()} C-DAC PATNA, All rights reserved.</span>
+      </footer>
     </div>
   );
 }

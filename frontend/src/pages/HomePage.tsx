@@ -5,7 +5,7 @@ import { apiFetch, isAdmin } from "../api";
 import AppShell from "../components/AppShell";
 
 type Player = { id: number; name: string; rating: number };
-type Tournament = { id: number; name: string; rounds: number; active: boolean; createdAt?: string };
+type Tournament = { id: number; name: string; rounds: number; active: boolean; createdAt?: string; setupDone?: boolean };
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -15,11 +15,10 @@ export default function HomePage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [active, setActive] = useState<Tournament[]>([]);
   const [past, setPast] = useState<Tournament[]>([]);
-  const [streaks, setStreaks] = useState<Array<{ name: string; count: number }>>([]);
-  const [killers, setKillers] = useState<string[]>([]);
+  const [streaks, setStreaks] = useState<Array<{ name: string; count: number; tournamentId: number; tournamentName: string }>>([]);
+  const [killers, setKillers] = useState<Array<{ name: string; tournamentId: number; tournamentName: string }>>([]);
 
   const [newName, setNewName] = useState("");
-  const [newRounds, setNewRounds] = useState(5);
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -31,8 +30,8 @@ export default function HomePage() {
         apiFetch<{ players: Player[] }>("/api/players?limit=10").then((r) => r.players),
         apiFetch<Tournament[]>("/api/tournaments?status=active"),
         apiFetch<Tournament[]>("/api/tournaments?status=past"),
-        apiFetch<Array<{ name: string; count: number }>>("/api/stats/winning-streaks"),
-        apiFetch<string[]>("/api/stats/giant-killers"),
+        apiFetch<Array<{ name: string; count: number; tournamentId: number; tournamentName: string }>>("/api/stats/winning-streaks"),
+        apiFetch<Array<{ name: string; tournamentId: number; tournamentName: string }>>("/api/stats/giant-killers"),
       ]);
       setPlayers(p);
       setActive(a);
@@ -57,7 +56,7 @@ export default function HomePage() {
     try {
       const t = await apiFetch<Tournament>("/api/tournaments", {
         method: "POST",
-        body: JSON.stringify({ name: newName, rounds: newRounds }),
+        body: JSON.stringify({ name: newName }),
       });
       navigate(`/tournaments/${t.id}`);
     } catch (e) {
@@ -139,15 +138,23 @@ export default function HomePage() {
         <section className="card">
           <h2>♟ Winning Streaks</h2>
           {streaks.length ? (
-            <ul className="streakList">
-              {streaks.map((s, idx) => (
-                <li key={s.name} className="streakItem">
-                  <span className="streakRank">{idx === 0 ? "🔥" : idx === 1 ? "⚡" : idx === 2 ? "✦" : "·"}</span>
-                  <span className="streakName">{s.name}</span>
-                  <span className="streakBadge">{s.count} wins</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <div className="statsTournamentLabel">
+                from:{" "}
+                <Link to={`/tournaments/${streaks[0].tournamentId}`} className="statsTournamentLink">
+                  {streaks[0].tournamentName}
+                </Link>
+              </div>
+              <ul className="streakList">
+                {streaks.map((s, idx) => (
+                  <li key={s.name} className="streakItem">
+                    <span className="streakRank">{idx === 0 ? "🔥" : idx === 1 ? "⚡" : idx === 2 ? "✦" : "·"}</span>
+                    <span className="streakName">{s.name}</span>
+                    <span className="streakBadge">{s.count} wins</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           ) : (
             <div className="emptyState compact">
               <div className="emptyStateBoard">
@@ -168,15 +175,23 @@ export default function HomePage() {
 
           <h2 style={{ marginTop: 24 }}>⚔ Giant Killers</h2>
           {killers.length ? (
-            <ul className="killerList">
-              {killers.map((name) => (
-                <li key={name} className="killerItem">
-                  <span className="killerIcon">♛</span>
-                  <span className="killerName">{name}</span>
-                  <span className="killerLabel">Slayer</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <div className="statsTournamentLabel">
+                from:{" "}
+                <Link to={`/tournaments/${killers[0].tournamentId}`} className="statsTournamentLink">
+                  {killers[0].tournamentName}
+                </Link>
+              </div>
+              <ul className="killerList">
+                {killers.map((k) => (
+                  <li key={k.name} className="killerItem">
+                    <span className="killerIcon">♛</span>
+                    <span className="killerName">{k.name}</span>
+                    <span className="killerLabel">Slayer</span>
+                  </li>
+                ))}
+              </ul>
+            </>
           ) : (
             <div className="emptyState compact">
               <div className="emptyStateBoard">
@@ -200,16 +215,16 @@ export default function HomePage() {
           <h2>Tournament</h2>
 
           <div className="tSectionsRow">
-            <div className="panel subcard">
-              <div className="tSectionHeader">
-                <div className="tSectionTitle">
-                  <Plus size={18} /> Create
+            {admin ? (
+              <div className="panel subcard">
+                <div className="tSectionHeader">
+                  <div className="tSectionTitle">
+                    <Plus size={18} /> Create
+                  </div>
+                  <span className="badge active">Admin</span>
                 </div>
-                <span className={admin ? "badge active" : "badge"}>{admin ? "Admin" : "Locked"}</span>
-              </div>
 
-              {admin ? (
-                createOpen ? (
+                {createOpen ? (
                   <div className="tCard create open">
                     <div className="tCardTop">
                       <div className="tCardIcon create">
@@ -229,7 +244,6 @@ export default function HomePage() {
 
                     <form onSubmit={onCreateTournament} className="stack" style={{ marginTop: 10 }}>
                       <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Tournament name" required />
-                      <input type="number" min={1} max={15} value={newRounds} onChange={(e) => setNewRounds(Number(e.target.value))} required />
                       <button className="btn primary" type="submit">
                         {creating ? "Creating…" : "Create"}
                       </button>
@@ -247,55 +261,64 @@ export default function HomePage() {
                     <div className="tCardName">Create tournament</div>
                     <div className="tCardMeta">Click to open</div>
                   </button>
-                )
-              ) : (
-                <button
-                  className="tCard tCardButton create"
-                  type="button"
-                  onClick={() => navigate("/admin/login")}
-                  aria-label="Admin login required to create a tournament"
-                >
-                  <div className="tCardTop">
-                    <div className="tCardIcon create">
-                      <Shield size={18} />
-                    </div>
-                    <span className="badge">Admin</span>
-                  </div>
+                )}
 
-                  <div className="tCardName">Create tournament</div>
-                  <div className="tCardMeta">Admin token required • Click to login</div>
-                </button>
-              )}
-            </div>
+                {/* Draft tournaments — only visible to admin, not yet finalized */}
+                {active.filter((t) => !t.setupDone).length > 0 ? (
+                  <div className="tGrid" style={{ marginTop: 12 }}>
+                    {active
+                      .filter((t) => !t.setupDone)
+                      .map((t) => {
+                        const setupStep = t.rounds === 0 ? "Step 1: Add participants" : "Step 2: Confirm & Start";
+                        return (
+                          <Link key={t.id} to={`/tournaments/${t.id}`} className="tCard setupDraft">
+                            <div className="tCardTop">
+                              <div className="tCardIcon">
+                                <span className="chessIcon">♞</span>
+                              </div>
+                              <span className="badge setupBadge">⚙ In Setup</span>
+                            </div>
+                            <div className="tCardName">{t.name}</div>
+                            <div className="tCardMeta">{t.rounds > 0 ? `Rounds: ${t.rounds}` : "Rounds: TBD"}</div>
+                            <div className="setupStepTag">{setupStep}</div>
+                          </Link>
+                        );
+                      })}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
 
             <div className="panel subcard">
               <div className="tSectionHeader">
                 <div className="tSectionTitle">
                   <span className="chessIcon">♞</span> Ongoing
                 </div>
-                <span className="badge active">{active.length}</span>
+                <span className="badge active">{active.filter((t) => t.setupDone).length}</span>
               </div>
 
-              {active.length ? (
+              {active.filter((t) => t.setupDone).length ? (
                 <div className="tGrid">
-                  {active.map((t) => (
-                    <Link key={t.id} to={`/tournaments/${t.id}`} className="tCard">
-                      <div className="tCardTop">
-                        <div className="tCardIcon">
-                          <span className="chessIcon">♞</span>
+                  {active
+                    .filter((t) => t.setupDone)
+                    .map((t) => (
+                      <Link key={t.id} to={`/tournaments/${t.id}`} className="tCard">
+                        <div className="tCardTop">
+                          <div className="tCardIcon">
+                            <span className="chessIcon">♞</span>
+                          </div>
+                          <span className="badge active">Active</span>
                         </div>
-                        <span className="badge active">Active</span>
-                      </div>
 
-                      <div className="tCardName">{t.name}</div>
-                      <div className="tCardMeta">Rounds: {t.rounds}</div>
-                      {t.createdAt ? (
-                        <div className="tCardMeta">
-                          Created: {new Date(t.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}
-                        </div>
-                      ) : null}
-                    </Link>
-                  ))}
+                        <div className="tCardName">{t.name}</div>
+                        <div className="tCardMeta">{t.rounds > 0 ? `Rounds: ${t.rounds}` : "Rounds: TBD"}</div>
+                        {t.createdAt ? (
+                          <div className="tCardMeta">
+                            Created: {new Date(t.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}
+                          </div>
+                        ) : null}
+                      </Link>
+                    ))}
                 </div>
               ) : (
                 <div className="emptyState">
@@ -330,7 +353,7 @@ export default function HomePage() {
                       </div>
 
                       <div className="tCardName">{t.name}</div>
-                      <div className="tCardMeta">Rounds: {t.rounds}</div>
+                      <div className="tCardMeta">{t.rounds > 0 ? `Rounds: ${t.rounds}` : "Rounds: TBD"}</div>
                       {t.createdAt ? (
                         <div className="tCardMeta">
                           Created: {new Date(t.createdAt).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}

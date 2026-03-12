@@ -1,0 +1,66 @@
+.chess-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chess-float {
+  position: absolute;
+  bottom: -5rem;
+  opacity: 0;
+  /* Gold piece with a dark outline — visible on both light and dark backgrounds */
+  color: rgba(212, 175, 55, 0.9);
+  text-shadow:
+    0 0 4px #000,
+    0 0 4px #000,
+    1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    0 0 20px rgba(212, 175, 55, 0.6),
+    0 0 40px rgba(212, 175, 55, 0.25);
+  animation: floatUp linear infinite;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 8px rgba(212, 175, 55, 0.35));
+}
+
+/* light theme: darker gold so it pops against parchment */
+:root[data-theme="light"] .chess-float {
+  color: rgba(140, 100, 10, 0.85);
+  text-shadow:
+    0 0 3px rgba(255, 255, 255, 0.8),
+    0 0 3px rgba(255, 255, 255, 0.8),
+    1px 1px 0 rgba(255, 255, 255, 0.6),
+    -1px -1px 0 rgba(255, 255, 255, 0.6),
+    0 0 18px rgba(180, 140, 20, 0.5),
+    0 0 36px rgba(180, 140, 20, 0.2);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25)) drop-shadow(0 0 6px rgba(180, 140, 20, 0.3));
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(0.55) perspective(500px) rotateX(25deg) rotateY(-15deg);
+    opacity: 0;
+  }
+  7% {
+    opacity: 0.45;
+  }
+  25% {
+    transform: translateY(-22vh) rotate(calc(var(--rot, 20deg) * 0.3)) scale(1.12) perspective(500px) rotateX(-12deg) rotateY(18deg);
+    opacity: 0.38;
+  }
+  55% {
+    transform: translateY(-55vh) rotate(calc(var(--rot, 20deg) * 0.7)) scale(1) perspective(500px) rotateX(8deg) rotateY(-12deg);
+    opacity: 0.25;
+  }
+  88% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(var(--rot, 20deg)) scale(0.65) perspective(500px) rotateX(-25deg) rotateY(10deg);
+    opacity: 0;
+  }
+}

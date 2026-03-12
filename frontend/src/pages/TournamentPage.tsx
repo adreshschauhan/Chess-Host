@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiFetch, apiFetchForm, isAdmin } from "../api";
 import AppShell from "../components/AppShell";
 
-type Tournament = { id: number; name: string; rounds: number; active: boolean };
+type Tournament = { id: number; name: string; rounds: number; active: boolean; setupDone: boolean };
 type Player = { id: number; name: string; rating: number };
 type Participant = {
   id: number;
@@ -35,10 +35,13 @@ type TournamentDetail = {
 
 export default function TournamentPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const tournamentId = Number(params.id);
 
   const [data, setData] = useState<TournamentDetail | null>(null);
   const [error, setError] = useState("");
+  const [finalizing, setFinalizing] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   const [playersText, setPlayersText] = useState("");
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
@@ -49,6 +52,9 @@ export default function TournamentPage() {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importMode, setImportMode] = useState<"append" | "replace">("append");
   const [importing, setImporting] = useState(false);
+
+  const [adjustedRounds, setAdjustedRounds] = useState(0);
+  const [savingRounds, setSavingRounds] = useState(false);
 
   const admin = isAdmin();
 
@@ -84,6 +90,11 @@ export default function TournamentPage() {
       setTimeout(() => setShowCelebration(true), 500);
     }
   }, [data]);
+
+  // Sync adjustedRounds whenever the tournament rounds value changes
+  useEffect(() => {
+    if (data?.tournament.rounds) setAdjustedRounds(data.tournament.rounds);
+  }, [data?.tournament.rounds]);
 
   async function saveParticipants(e: React.FormEvent) {
     e.preventDefault();
@@ -179,6 +190,49 @@ export default function TournamentPage() {
     }
   }
 
+  async function finalizeSetup() {
+    if (!confirm("Start this tournament? Participants will be locked in.")) return;
+    setFinalizing(true);
+    setError("");
+    try {
+      await apiFetch(`/api/tournaments/${tournamentId}/start`, { method: "POST", body: JSON.stringify({}) });
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to start tournament");
+    } finally {
+      setFinalizing(false);
+    }
+  }
+
+  async function cancelTournament() {
+    if (!confirm("Cancel and permanently delete this tournament and all its data?")) return;
+    setCancelling(true);
+    setError("");
+    try {
+      await apiFetch(`/api/tournaments/${tournamentId}`, { method: "DELETE" });
+      navigate("/dashboard");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Cancel failed");
+      setCancelling(false);
+    }
+  }
+
+  async function saveRounds() {
+    setSavingRounds(true);
+    setError("");
+    try {
+      await apiFetch(`/api/tournaments/${tournamentId}`, {
+        method: "PUT",
+        body: JSON.stringify({ rounds: adjustedRounds }),
+      });
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to save rounds");
+    } finally {
+      setSavingRounds(false);
+    }
+  }
+
   if (!data) {
     return (
       <AppShell
@@ -200,16 +254,33 @@ export default function TournamentPage() {
 
   const { tournament, participants, rounds } = data;
   const hasRounds = rounds.length > 0;
+  const isDraft = !tournament.setupDone;
 
   return (
     <AppShell
       title={tournament.name}
-      subtitle={tournament.active ? "Active tournament" : "Completed tournament"}
+      subtitle={
+        !tournament.active
+          ? "Completed tournament"
+          : isDraft
+            ? participants.length === 0
+              ? "Setup — Step 1: Add participants"
+              : tournament.rounds === 0
+                ? "Setup — Step 2: Generating rounds…"
+                : "Setup — Step 3: Confirm & Start"
+            : "Active tournament"
+      }
       actions={
         <>
           <Link className="btn" to="/dashboard">
             Dashboard
           </Link>
+          {/* Cancel button — only during draft/setup phase */}
+          {admin && isDraft && tournament.active ? (
+            <button type="button" className="btn btnCancel" onClick={() => void cancelTournament()} disabled={cancelling}>
+              {cancelling ? "Cancelling…" : "✕ Cancel Tournament"}
+            </button>
+          ) : null}
         </>
       }
     >
@@ -346,15 +417,67 @@ export default function TournamentPage() {
         <section className="card">
           <h2>Rounds</h2>
 
+          {/* Rounds configuration — visible after participants are saved, before first round */}
+          {participants.length >= 2 &&
+            !hasRounds &&
+            admin &&
+            tournament.active &&
+            (() => {
+              const swissMin = Math.ceil(Math.log2(Math.max(participants.length, 2)));
+              return (
+                <div className="roundsConfigPanel">
+                  <div className="roundsConfigHeader">
+                    <span className="roundsConfigTitle">♟ Rounds Configuration</span>
+                    <span className="roundsConfigHint">
+                      Swiss minimum: <strong>{swissMin}</strong> rounds for <strong>{participants.length}</strong> players
+                    </span>
+                  </div>
+                  <div className="roundsConfigRow">
+                    <label className="roundsConfigLabel">Rounds</label>
+                    <input
+                      type="number"
+                      className="roundsConfigInput"
+                      min={swissMin}
+                      value={adjustedRounds || tournament.rounds}
+                      onChange={(e) => {
+                        const v = Math.max(swissMin, Number(e.target.value));
+                        setAdjustedRounds(v);
+                      }}
+                    />
+                    <span className="roundsConfigMax">min {swissMin}</span>
+                    <button
+                      type="button"
+                      className="btn primary"
+                      onClick={() => void saveRounds()}
+                      disabled={savingRounds || (adjustedRounds || tournament.rounds) === tournament.rounds}
+                    >
+                      {savingRounds ? "Saving…" : "Set Rounds"}
+                    </button>
+                  </div>
+                  <div className="roundsConfigNote">
+                    Swiss minimum ensures fair gameplay. You may add as many rounds above {swissMin} as you like.
+                  </div>
+                </div>
+              );
+            })()}
+
+          {/* Final Submit — shown when setup is ready but not yet started */}
+          {admin && isDraft && tournament.active && participants.length >= 2 && tournament.rounds > 0 ? (
+            <button type="button" className="btn finalSubmitBtn" onClick={() => void finalizeSetup()} disabled={finalizing}>
+              {finalizing ? "Starting…" : "✓ Final Submit — Start Tournament"}
+            </button>
+          ) : null}
+
           {tournament.active && data.canGenerateRound && admin ? (
             <button className="btn primary" onClick={generateRound}>
               Generate Next Round
             </button>
-          ) : (
+          ) : !isDraft ? (
             <div className="muted">{tournament.active ? "Waiting for results / participants" : "Tournament finished"}</div>
-          )}
+          ) : null}
 
-          {tournament.active && admin ? (
+          {/* Complete Tournament — only after setup is finalised */}
+          {tournament.active && tournament.setupDone && admin ? (
             <button className="btn danger" style={{ marginTop: 8 }} onClick={() => void completeTournament()}>
               Complete Tournament
             </button>

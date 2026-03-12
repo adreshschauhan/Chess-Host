@@ -81,21 +81,23 @@
 :root[data-theme="light"] .legendCard.rank1 {
   border-color: rgba(120, 90, 0, 0.4);
   border-top-color: #b8860b;
-  background: linear-gradient(160deg, rgba(212,175,55,0.15) 0%, rgba(240,234,210,0.3) 60%), var(--surface);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 0 12px rgba(184,134,11,0.12);
+  background: linear-gradient(160deg, rgba(212, 175, 55, 0.15) 0%, rgba(240, 234, 210, 0.3) 60%), var(--surface);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.15),
+    0 0 12px rgba(184, 134, 11, 0.12);
   animation: legendCardIn 0.4s ease both;
 }
 
 :root[data-theme="light"] .legendCard.rank2 {
   border-color: rgba(80, 80, 80, 0.3);
   border-top-color: #888;
-  background: linear-gradient(160deg, rgba(160,160,160,0.1) 0%, rgba(240,234,210,0.3) 60%), var(--surface);
+  background: linear-gradient(160deg, rgba(160, 160, 160, 0.1) 0%, rgba(240, 234, 210, 0.3) 60%), var(--surface);
 }
 
 :root[data-theme="light"] .legendCard.rank3 {
   border-color: rgba(160, 100, 30, 0.3);
   border-top-color: #a0641e;
-  background: linear-gradient(160deg, rgba(205,127,50,0.1) 0%, rgba(240,234,210,0.3) 60%), var(--surface);
+  background: linear-gradient(160deg, rgba(205, 127, 50, 0.1) 0%, rgba(240, 234, 210, 0.3) 60%), var(--surface);
 }
 
 :root[data-theme="light"] .legendCard.rank1 .legendPieceWrap {
@@ -123,16 +125,31 @@
   text-shadow: none;
 }
 
-:root[data-theme="light"] .legendStatPip.win .legendStatPipNum  { color: #2d6e0e; }
-:root[data-theme="light"] .legendStatPip.draw .legendStatPipNum { color: #7a5c00; }
-:root[data-theme="light"] .legendStatPip.loss .legendStatPipNum { color: #b91c1c; }
+:root[data-theme="light"] .legendStatPip.win .legendStatPipNum {
+  color: #2d6e0e;
+}
+:root[data-theme="light"] .legendStatPip.draw .legendStatPipNum {
+  color: #7a5c00;
+}
+:root[data-theme="light"] .legendStatPip.loss .legendStatPipNum {
+  color: #b91c1c;
+}
 
-:root[data-theme="light"] .legendStatPip.win  { border-color: rgba(45,110,14,0.25);  background: rgba(45,110,14,0.06); }
-:root[data-theme="light"] .legendStatPip.draw { border-color: rgba(120,90,0,0.22);   background: rgba(120,90,0,0.06); }
-:root[data-theme="light"] .legendStatPip.loss { border-color: rgba(185,28,28,0.22);  background: rgba(185,28,28,0.05); }
+:root[data-theme="light"] .legendStatPip.win {
+  border-color: rgba(45, 110, 14, 0.25);
+  background: rgba(45, 110, 14, 0.06);
+}
+:root[data-theme="light"] .legendStatPip.draw {
+  border-color: rgba(120, 90, 0, 0.22);
+  background: rgba(120, 90, 0, 0.06);
+}
+:root[data-theme="light"] .legendStatPip.loss {
+  border-color: rgba(185, 28, 28, 0.22);
+  background: rgba(185, 28, 28, 0.05);
+}
 
 :root[data-theme="light"] .legendBarFill {
-  background: linear-gradient(90deg, rgba(45,110,14,0.7), rgba(80,160,40,0.9));
+  background: linear-gradient(90deg, rgba(45, 110, 14, 0.7), rgba(80, 160, 40, 0.9));
 }
 
 :root[data-theme="light"] .legendProfileBtn {
@@ -144,9 +161,18 @@
   border-color: rgba(120, 90, 0, 0.5);
 }
 
-:root[data-theme="light"] .rankGold   { color: #7a5c00; text-shadow: none; }
-:root[data-theme="light"] .rankSilver { color: #4a4a4a; text-shadow: none; }
-:root[data-theme="light"] .rankBronze { color: #7a4a10; text-shadow: none; }
+:root[data-theme="light"] .rankGold {
+  color: #7a5c00;
+  text-shadow: none;
+}
+:root[data-theme="light"] .rankSilver {
+  color: #4a4a4a;
+  text-shadow: none;
+}
+:root[data-theme="light"] .rankBronze {
+  color: #7a4a10;
+  text-shadow: none;
+}
 
 :root[data-theme="light"] .streakBadge {
   background: rgba(120, 90, 0, 0.1);
@@ -154,8 +180,14 @@
   border-color: rgba(120, 90, 0, 0.3);
 }
 
-:root[data-theme="light"] .killerIcon  { color: #a0641e; text-shadow: none; }
-:root[data-theme="light"] .killerLabel { color: #a0641e; border-color: rgba(160,100,30,0.35); }
+:root[data-theme="light"] .killerIcon {
+  color: #a0641e;
+  text-shadow: none;
+}
+:root[data-theme="light"] .killerLabel {
+  color: #a0641e;
+  border-color: rgba(160, 100, 30, 0.35);
+}
 
 :root[data-theme="light"] .podiumScore {
   color: #7a5c00;
@@ -277,7 +309,7 @@
 input,
 textarea,
 select {
-  width: 100%;
+  /* width: 100%; */
   padding: 10px 12px;
   border-radius: 4px;
   border: 1px solid rgba(212, 175, 55, 0.22);
@@ -888,7 +920,9 @@ select:focus {
   background: rgba(212, 175, 55, 0.07);
   color: var(--text);
   text-decoration: none;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 .leaderboardViewAll:hover {
   background: rgba(212, 175, 55, 0.16);
@@ -947,7 +981,9 @@ select:focus {
   background: var(--surface-3);
   color: var(--text);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .pageSizeBtn:hover {
   background: rgba(212, 175, 55, 0.1);
@@ -956,7 +992,7 @@ select:focus {
 .pageSizeBtn.active {
   background: rgba(212, 175, 55, 0.18);
   border-color: rgba(212, 175, 55, 0.6);
-  color: #FFD700;
+  color: #ffd700;
   font-weight: 700;
 }
 .paginationBtns {
@@ -975,7 +1011,9 @@ select:focus {
   color: var(--text);
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .pageBtn:hover:not(:disabled) {
   background: rgba(212, 175, 55, 0.12);
@@ -1004,6 +1042,33 @@ select:focus {
 .rankBronze {
   color: #ff8c42;
   text-shadow: 0 0 6px rgba(255, 140, 66, 0.6);
+}
+
+/* ── Stats tournament source label ── */
+.statsTournamentLabel {
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+  margin-top: 6px;
+}
+.statsTournamentLink {
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.statsTournamentLink:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+:root[data-theme="light"] .statsTournamentLabel {
+  color: rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="light"] .statsTournamentLink {
+  color: rgba(0, 0, 0, 0.65);
+}
+:root[data-theme="light"] .statsTournamentLink:hover {
+  color: #000;
 }
 
 /* ── Winning Streaks list ── */
@@ -1372,6 +1437,157 @@ select:focus {
   background: rgba(212, 175, 55, 0.15);
 }
 
+/* ── Stats Filter Bar ── */
+.statsFilterBar {
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-top: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  backdrop-filter: blur(8px);
+}
+
+.statsFilterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.statsFilterLabel {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  width: 70px;
+  flex-shrink: 0;
+  font-family: "Cinzel", Georgia, serif;
+}
+
+.statsSearchInput {
+  flex: 1;
+  min-width: 160px;
+  padding: 6px 11px;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  background: var(--control-bg);
+  color: var(--text);
+  font-size: 13px;
+  width: auto;
+}
+.statsSearchInput:focus {
+  outline: none;
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1);
+}
+
+.filterChip {
+  font-size: 11px;
+  font-family: "Cinzel", Georgia, serif;
+  letter-spacing: 0.03em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: var(--surface-3);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 0.14s,
+    border-color 0.14s;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.4;
+}
+.filterChip:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+.filterChip.active {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: rgba(212, 175, 55, 0.6);
+  font-weight: 700;
+}
+
+/* Tier-specific active tints */
+.filterChip.tier-grandmaster.active {
+  background: rgba(255, 215, 0, 0.14);
+  border-color: rgba(255, 215, 0, 0.55);
+}
+.filterChip.tier-elite.active {
+  background: rgba(192, 192, 192, 0.14);
+  border-color: rgba(192, 192, 192, 0.45);
+}
+.filterChip.tier-master.active {
+  background: rgba(205, 127, 50, 0.14);
+  border-color: rgba(205, 127, 50, 0.45);
+}
+.filterChip.tier-expert.active {
+  background: rgba(120, 185, 80, 0.12);
+  border-color: rgba(120, 185, 80, 0.45);
+}
+.filterChip.tier-advanced.active {
+  background: rgba(100, 149, 237, 0.12);
+  border-color: rgba(100, 149, 237, 0.4);
+}
+.filterChip.tier-player.active {
+  background: rgba(180, 180, 180, 0.1);
+  border-color: rgba(180, 180, 180, 0.4);
+}
+
+.filterActiveCount {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--text);
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.filterClearBtn {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.07);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.14s;
+}
+.filterClearBtn:hover {
+  background: rgba(248, 113, 113, 0.15);
+}
+
+/* Light theme filter overrides */
+:root[data-theme="light"] .filterChip.active {
+  background: rgba(120, 90, 0, 0.12);
+  border-color: rgba(120, 90, 0, 0.45);
+}
+:root[data-theme="light"] .filterChip.tier-grandmaster.active {
+  background: rgba(184, 134, 11, 0.12);
+  border-color: rgba(120, 90, 0, 0.45);
+}
+:root[data-theme="light"] .filterChip.tier-elite.active {
+  background: rgba(80, 80, 80, 0.1);
+  border-color: rgba(80, 80, 80, 0.4);
+}
+:root[data-theme="light"] .filterChip.tier-master.active {
+  background: rgba(160, 100, 30, 0.1);
+  border-color: rgba(160, 100, 30, 0.4);
+}
+:root[data-theme="light"] .filterChip.tier-expert.active {
+  background: rgba(45, 110, 14, 0.1);
+  border-color: rgba(45, 110, 14, 0.4);
+}
+:root[data-theme="light"] .filterChip.tier-advanced.active {
+  background: rgba(30, 80, 180, 0.08);
+  border-color: rgba(30, 80, 180, 0.35);
+}
+
 /* ══════════════════════════════════════════
    ♟  STATS PAGE — Chess Cabinet of Legends
 ══════════════════════════════════════════ */
@@ -1388,23 +1604,45 @@ select:focus {
 }
 
 @keyframes piecFloat {
-  0%, 100% { transform: translateY(0) rotate(-3deg); }
-  50%       { transform: translateY(-8px) rotate(3deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(3deg);
+  }
 }
 
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 18px rgba(255, 215, 0, 0.18), 0 6px 28px rgba(0,0,0,0.55); }
-  50%       { box-shadow: 0 0 36px rgba(255, 215, 0, 0.38), 0 6px 28px rgba(0,0,0,0.55); }
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px rgba(255, 215, 0, 0.18),
+      0 6px 28px rgba(0, 0, 0, 0.55);
+  }
+  50% {
+    box-shadow:
+      0 0 36px rgba(255, 215, 0, 0.38),
+      0 6px 28px rgba(0, 0, 0, 0.55);
+  }
 }
 
 @keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position:  200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 @keyframes barFill {
-  from { width: 0; }
-  to   { width: var(--bar-w); }
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--bar-w);
+  }
 }
 
 /* ── Cabinet banner at top of page ── */
@@ -1413,13 +1651,11 @@ select:focus {
   overflow: hidden;
   padding: 22px 24px;
   border-radius: 8px;
-  border: 1px solid rgba(212,175,55,0.3);
+  border: 1px solid rgba(212, 175, 55, 0.3);
   border-top: 3px solid #ffd700;
-  background:
-    linear-gradient(135deg, rgba(212,175,55,0.14), rgba(10,8,4,0.05) 60%, rgba(212,175,55,0.06)),
-    var(--surface-2);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(10, 8, 4, 0.05) 60%, rgba(212, 175, 55, 0.06)), var(--surface-2);
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.55);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   gap: 20px;
@@ -1429,7 +1665,7 @@ select:focus {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-conic-gradient(rgba(212,175,55,0.04) 0 25%, transparent 0 50%) 0 0 / 28px 28px;
+  background: repeating-conic-gradient(rgba(212, 175, 55, 0.04) 0 25%, transparent 0 50%) 0 0 / 28px 28px;
   pointer-events: none;
 }
 
@@ -1439,7 +1675,7 @@ select:focus {
   line-height: 1;
   user-select: none;
   animation: piecFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 4px 10px rgba(255,215,0,0.35));
+  filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.35));
   flex-shrink: 0;
 }
 
@@ -1477,8 +1713,8 @@ select:focus {
   gap: 3px;
   padding: 10px 16px;
   border-radius: 6px;
-  border: 1px solid rgba(212,175,55,0.25);
-  background: rgba(212,175,55,0.07);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.07);
   min-width: 70px;
   text-align: center;
 }
@@ -1488,7 +1724,7 @@ select:focus {
   font-size: 24px;
   font-weight: 700;
   color: #ffd700;
-  text-shadow: 0 0 10px rgba(255,215,0,0.4);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
   line-height: 1;
 }
 
@@ -1511,12 +1747,15 @@ select:focus {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  border: 1px solid rgba(212,175,55,0.2);
-  border-top: 2px solid rgba(212,175,55,0.35);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-top: 2px solid rgba(212, 175, 55, 0.35);
   background: var(--surface);
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
   animation: legendCardIn 0.4s ease both;
   padding: 0;
   display: flex;
@@ -1527,37 +1766,41 @@ select:focus {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-conic-gradient(rgba(212,175,55,0.03) 0 25%, transparent 0 50%) 0 0 / 20px 20px;
+  background: repeating-conic-gradient(rgba(212, 175, 55, 0.03) 0 25%, transparent 0 50%) 0 0 / 20px 20px;
   pointer-events: none;
   z-index: 0;
 }
 
 .legendCard:hover {
   transform: translateY(-4px);
-  border-color: rgba(212,175,55,0.55);
-  box-shadow: 0 12px 36px rgba(0,0,0,0.6), 0 0 20px rgba(212,175,55,0.12);
+  border-color: rgba(212, 175, 55, 0.55);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(212, 175, 55, 0.12);
 }
 
 /* Rank-1 — Gold king card */
 .legendCard.rank1 {
-  border-color: rgba(255,215,0,0.5);
+  border-color: rgba(255, 215, 0, 0.5);
   border-top: 3px solid #ffd700;
-  animation: legendCardIn 0.4s ease both, glowPulse 3.5s ease-in-out infinite;
-  background: linear-gradient(160deg, rgba(255,215,0,0.1) 0%, rgba(10,8,4,0.3) 60%), var(--surface);
+  animation:
+    legendCardIn 0.4s ease both,
+    glowPulse 3.5s ease-in-out infinite;
+  background: linear-gradient(160deg, rgba(255, 215, 0, 0.1) 0%, rgba(10, 8, 4, 0.3) 60%), var(--surface);
 }
 
 /* Rank-2 — Silver */
 .legendCard.rank2 {
-  border-color: rgba(200,200,200,0.35);
+  border-color: rgba(200, 200, 200, 0.35);
   border-top: 3px solid #c0c0c0;
-  background: linear-gradient(160deg, rgba(192,192,192,0.07) 0%, rgba(10,8,4,0.3) 60%), var(--surface);
+  background: linear-gradient(160deg, rgba(192, 192, 192, 0.07) 0%, rgba(10, 8, 4, 0.3) 60%), var(--surface);
 }
 
 /* Rank-3 — Bronze */
 .legendCard.rank3 {
-  border-color: rgba(205,127,50,0.35);
+  border-color: rgba(205, 127, 50, 0.35);
   border-top: 3px solid #cd7f32;
-  background: linear-gradient(160deg, rgba(205,127,50,0.08) 0%, rgba(10,8,4,0.3) 60%), var(--surface);
+  background: linear-gradient(160deg, rgba(205, 127, 50, 0.08) 0%, rgba(10, 8, 4, 0.3) 60%), var(--surface);
 }
 
 /* ── Card header (piece + rank badge) ── */
@@ -1574,8 +1817,8 @@ select:focus {
   width: 56px;
   height: 56px;
   border-radius: 6px;
-  border: 1px solid rgba(212,175,55,0.3);
-  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(212, 175, 55, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1583,17 +1826,17 @@ select:focus {
 }
 
 .legendCard.rank1 .legendPieceWrap {
-  border-color: rgba(255,215,0,0.5);
-  background: rgba(255,215,0,0.12);
-  box-shadow: 0 0 14px rgba(255,215,0,0.2);
+  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.12);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.2);
 }
 .legendCard.rank2 .legendPieceWrap {
-  border-color: rgba(192,192,192,0.4);
-  background: rgba(192,192,192,0.08);
+  border-color: rgba(192, 192, 192, 0.4);
+  background: rgba(192, 192, 192, 0.08);
 }
 .legendCard.rank3 .legendPieceWrap {
-  border-color: rgba(205,127,50,0.4);
-  background: rgba(205,127,50,0.1);
+  border-color: rgba(205, 127, 50, 0.4);
+  background: rgba(205, 127, 50, 0.1);
 }
 
 .legendPiece {
@@ -1601,11 +1844,11 @@ select:focus {
   line-height: 1;
   user-select: none;
   animation: piecFloat 4s ease-in-out infinite;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
 
 .legendCard.rank1 .legendPiece {
-  filter: drop-shadow(0 2px 10px rgba(255,215,0,0.5));
+  filter: drop-shadow(0 2px 10px rgba(255, 215, 0, 0.5));
   animation-duration: 3s;
 }
 
@@ -1616,26 +1859,26 @@ select:focus {
   letter-spacing: 0.08em;
   padding: 3px 9px;
   border-radius: 999px;
-  border: 1px solid rgba(212,175,55,0.3);
-  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(212, 175, 55, 0.08);
   color: var(--muted);
   text-transform: uppercase;
 }
 
 .legendCard.rank1 .legendRankBadge {
-  border-color: rgba(255,215,0,0.5);
-  background: rgba(255,215,0,0.12);
+  border-color: rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.12);
   color: #ffd700;
-  text-shadow: 0 0 6px rgba(255,215,0,0.3);
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
 }
 .legendCard.rank2 .legendRankBadge {
-  border-color: rgba(192,192,192,0.4);
-  background: rgba(192,192,192,0.08);
+  border-color: rgba(192, 192, 192, 0.4);
+  background: rgba(192, 192, 192, 0.08);
   color: #c0c0c0;
 }
 .legendCard.rank3 .legendRankBadge {
-  border-color: rgba(205,127,50,0.4);
-  background: rgba(205,127,50,0.1);
+  border-color: rgba(205, 127, 50, 0.4);
+  background: rgba(205, 127, 50, 0.1);
   color: #cd7f32;
 }
 
@@ -1675,7 +1918,7 @@ select:focus {
   font-weight: 700;
   line-height: 1;
   color: #ffd700;
-  text-shadow: 0 0 10px rgba(255,215,0,0.3);
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
 .legendRatingLabel {
@@ -1699,13 +1942,22 @@ select:focus {
   gap: 2px;
   padding: 5px 4px;
   border-radius: 4px;
-  border: 1px solid rgba(212,175,55,0.12);
-  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.legendStatPip.win  { border-color: rgba(120,185,80,0.25); background: rgba(120,185,80,0.06); }
-.legendStatPip.draw { border-color: rgba(212,175,55,0.2);  background: rgba(212,175,55,0.06); }
-.legendStatPip.loss { border-color: rgba(248,113,113,0.2); background: rgba(248,113,113,0.05); }
+.legendStatPip.win {
+  border-color: rgba(120, 185, 80, 0.25);
+  background: rgba(120, 185, 80, 0.06);
+}
+.legendStatPip.draw {
+  border-color: rgba(212, 175, 55, 0.2);
+  background: rgba(212, 175, 55, 0.06);
+}
+.legendStatPip.loss {
+  border-color: rgba(248, 113, 113, 0.2);
+  background: rgba(248, 113, 113, 0.05);
+}
 
 .legendStatPipNum {
   font-size: 17px;
@@ -1714,9 +1966,15 @@ select:focus {
   line-height: 1;
   color: var(--text);
 }
-.legendStatPip.win  .legendStatPipNum { color: rgba(140,200,90,0.9); }
-.legendStatPip.draw .legendStatPipNum { color: rgba(212,175,55,0.85); }
-.legendStatPip.loss .legendStatPipNum { color: rgba(248,113,113,0.8); }
+.legendStatPip.win .legendStatPipNum {
+  color: rgba(140, 200, 90, 0.9);
+}
+.legendStatPip.draw .legendStatPipNum {
+  color: rgba(212, 175, 55, 0.85);
+}
+.legendStatPip.loss .legendStatPipNum {
+  color: rgba(248, 113, 113, 0.8);
+}
 
 .legendStatPipLabel {
   font-size: 8px;
@@ -1744,7 +2002,7 @@ select:focus {
 .legendBarTrack {
   height: 5px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
   position: relative;
 }
@@ -1752,7 +2010,7 @@ select:focus {
 .legendBarFill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(120,185,80,0.7), rgba(160,220,100,0.9));
+  background: linear-gradient(90deg, rgba(120, 185, 80, 0.7), rgba(160, 220, 100, 0.9));
   width: var(--bar-w, 0%);
   animation: barFill 1s cubic-bezier(0.34, 1.1, 0.64, 1) both;
   animation-delay: var(--bar-delay, 0s);
@@ -1766,13 +2024,13 @@ select:focus {
 }
 
 .legendProfileBtn {
-  display: block;
-  width: 100%;
+  /* display: block;
+  width: 100%; */
   text-align: center;
   padding: 7px 12px;
   border-radius: 4px;
-  border: 1px solid rgba(212,175,55,0.28);
-  background: rgba(212,175,55,0.06);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.06);
   color: var(--text);
   font-family: "Cinzel", Georgia, serif;
   font-size: 11px;
@@ -1780,11 +2038,13 @@ select:focus {
   letter-spacing: 0.07em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .legendProfileBtn:hover {
-  background: rgba(212,175,55,0.14);
-  border-color: rgba(212,175,55,0.5);
+  background: rgba(212, 175, 55, 0.14);
+  border-color: rgba(212, 175, 55, 0.5);
   text-decoration: none;
 }
 
@@ -1792,5 +2052,1004 @@ select:focus {
 .legendDivider {
   margin: 6px 14px;
   border: none;
-  border-top: 1px solid rgba(212,175,55,0.1);
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+/* ══════════════════════════════════════════
+   ♟  ROUNDS CONFIGURATION PANEL
+══════════════════════════════════════════ */
+
+.roundsConfigPanel {
+  margin-top: 18px;
+  padding: 16px 18px;
+  background: rgba(18, 12, 8, 0.55);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 12px;
+}
+
+.roundsConfigHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.roundsConfigTitle {
+  font-family: "Cinzel", serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(212, 175, 55, 0.9);
+  letter-spacing: 0.05em;
+}
+
+.roundsConfigHint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.roundsConfigHint strong {
+  color: rgba(212, 175, 55, 0.8);
+}
+
+.roundsConfigRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.roundsConfigLabel {
+  font-family: "Cinzel", serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(212, 175, 55, 0.7);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.roundsConfigInput {
+  width: 72px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 7px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.roundsConfigInput:focus {
+  outline: none;
+  border-color: rgba(212, 175, 55, 0.65);
+}
+
+.roundsConfigMax {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+
+.roundsConfigNote {
+  margin-top: 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .roundsConfigPanel {
+  background: rgba(250, 245, 230, 0.85);
+  border-color: rgba(120, 90, 0, 0.22);
+}
+:root[data-theme="light"] .roundsConfigTitle {
+  color: #7a5c00;
+}
+:root[data-theme="light"] .roundsConfigHint {
+  color: rgba(0, 0, 0, 0.5);
+}
+:root[data-theme="light"] .roundsConfigHint strong {
+  color: #7a5c00;
+}
+:root[data-theme="light"] .roundsConfigLabel {
+  color: #7a5c00;
+}
+:root[data-theme="light"] .roundsConfigInput {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(120, 90, 0, 0.3);
+  color: #1a1a1a;
+}
+:root[data-theme="light"] .roundsConfigMax {
+  color: rgba(0, 0, 0, 0.4);
+}
+:root[data-theme="light"] .roundsConfigNote {
+  color: rgba(0, 0, 0, 0.38);
+}
+
+/* ══════════════════════════════════════════
+   CANCEL / FINAL SUBMIT BUTTONS
+══════════════════════════════════════════ */
+
+.btnCancel {
+  background: transparent;
+  border: 1.5px solid rgba(220, 60, 60, 0.7);
+  color: #e05555;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+.btnCancel:hover:not(:disabled) {
+  background: rgba(220, 60, 60, 0.12);
+  border-color: #e05555;
+  color: #ff6b6b;
+}
+
+.finalSubmitBtn {
+  background: linear-gradient(135deg, #2d7a3a 0%, #1e5928 100%);
+  border: 1.5px solid rgba(80, 200, 100, 0.35);
+  color: #b9f5c5;
+  font-weight: 700;
+  font-size: 0.97em;
+  letter-spacing: 0.02em;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+  box-shadow: 0 2px 10px rgba(40, 160, 70, 0.25);
+}
+.finalSubmitBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #379146 0%, #255e30 100%);
+  box-shadow: 0 3px 14px rgba(40, 160, 70, 0.4);
+}
+.finalSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+:root[data-theme="light"] .btnCancel {
+  border-color: rgba(180, 30, 30, 0.6);
+  color: #c0392b;
+}
+:root[data-theme="light"] .btnCancel:hover:not(:disabled) {
+  background: rgba(192, 57, 43, 0.08);
+  border-color: #c0392b;
+  color: #a93226;
+}
+:root[data-theme="light"] .finalSubmitBtn {
+  background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+  border-color: rgba(39, 174, 96, 0.4);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(39, 174, 96, 0.3);
+}
+:root[data-theme="light"] .finalSubmitBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  box-shadow: 0 3px 14px rgba(39, 174, 96, 0.45);
+}
+
+/* ══════════════════════════════════════════
+   SETUP DRAFT TOURNAMENT BADGES (DASHBOARD)
+══════════════════════════════════════════ */
+
+.badge.setupBadge {
+  background: rgba(210, 140, 0, 0.18);
+  color: #e8a020;
+  border: 1px solid rgba(210, 140, 0, 0.3);
+}
+
+.tCard.setupDraft {
+  border-color: rgba(210, 140, 0, 0.3);
+  background: rgba(210, 140, 0, 0.05);
+}
+
+.setupStepTag {
+  font-size: 0.72em;
+  color: #d49030;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+  font-style: italic;
+}
+
+:root[data-theme="light"] .badge.setupBadge {
+  background: rgba(180, 100, 0, 0.1);
+  color: #96620a;
+  border-color: rgba(180, 100, 0, 0.25);
+}
+:root[data-theme="light"] .tCard.setupDraft {
+  border-color: rgba(180, 100, 0, 0.25);
+  background: rgba(255, 248, 225, 0.6);
+}
+:root[data-theme="light"] .setupStepTag {
+  color: #8b5e0a;
+}
+
+/* ══════════════════════════════════════════
+   ♟  TIER GUIDE PANEL
+══════════════════════════════════════════ */
+
+/* ℹ toggle button */
+.tierInfoBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  margin-left: 7px;
+  padding: 0;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 50%;
+  color: rgba(212, 175, 55, 0.75);
+  font-size: 10px;
+  font-style: normal;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  vertical-align: middle;
+  line-height: 1;
+}
+.tierInfoBtn:hover,
+.tierInfoBtn.open {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: rgba(212, 175, 55, 0.6);
+  color: #ffd700;
+}
+
+/* Expanding guide panel */
+@keyframes tierGuideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tierGuidePanel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 12px 14px;
+  margin: 2px 0 6px;
+  background: rgba(18, 12, 8, 0.55);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 10px;
+  animation: tierGuideIn 0.2s ease;
+}
+
+.tierGuideRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.tierGuideRow:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+/* Active state — mirrors filterChip tier colours */
+.tierGuideRow.tier-grandmaster.active {
+  background: rgba(212, 175, 55, 0.16);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+.tierGuideRow.tier-elite.active {
+  background: rgba(160, 160, 160, 0.14);
+  border-color: rgba(180, 180, 180, 0.5);
+}
+.tierGuideRow.tier-master.active {
+  background: rgba(205, 133, 63, 0.14);
+  border-color: rgba(205, 133, 63, 0.5);
+}
+.tierGuideRow.tier-expert.active {
+  background: rgba(72, 160, 50, 0.12);
+  border-color: rgba(72, 160, 50, 0.45);
+}
+.tierGuideRow.tier-advanced.active {
+  background: rgba(56, 132, 240, 0.12);
+  border-color: rgba(56, 132, 240, 0.42);
+}
+.tierGuideRow.tier-player.active {
+  background: rgba(148, 104, 70, 0.12);
+  border-color: rgba(148, 104, 70, 0.45);
+}
+
+.tierGuidePiece {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.tierGuideLabel {
+  font-family: "Cinzel", serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: rgba(212, 175, 55, 0.9);
+  letter-spacing: 0.04em;
+  flex: 1;
+  white-space: nowrap;
+}
+.tierGuideRange {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.42);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Light theme overrides */
+:root[data-theme="light"] .tierGuidePanel {
+  background: rgba(250, 245, 230, 0.85);
+  border-color: rgba(120, 90, 0, 0.2);
+}
+:root[data-theme="light"] .tierGuideRow {
+  border-color: rgba(120, 90, 0, 0.12);
+  background: rgba(0, 0, 0, 0.02);
+}
+:root[data-theme="light"] .tierGuideRow:hover {
+  background: rgba(120, 90, 0, 0.07);
+  border-color: rgba(120, 90, 0, 0.28);
+}
+:root[data-theme="light"] .tierGuideLabel {
+  color: #7a5c00;
+}
+:root[data-theme="light"] .tierGuideRange {
+  color: rgba(0, 0, 0, 0.48);
+}
+:root[data-theme="light"] .tierInfoBtn {
+  background: rgba(120, 90, 0, 0.08);
+  border-color: rgba(120, 90, 0, 0.3);
+  color: #7a5c00;
+}
+:root[data-theme="light"] .tierInfoBtn:hover,
+:root[data-theme="light"] .tierInfoBtn.open {
+  background: rgba(120, 90, 0, 0.15);
+  border-color: rgba(120, 90, 0, 0.5);
+  color: #4a3800;
+}
+:root[data-theme="light"] .tierGuideRow.tier-grandmaster.active {
+  background: rgba(184, 134, 11, 0.12);
+  border-color: rgba(120, 90, 0, 0.45);
+}
+:root[data-theme="light"] .tierGuideRow.tier-elite.active {
+  background: rgba(80, 80, 80, 0.1);
+  border-color: rgba(80, 80, 80, 0.4);
+}
+:root[data-theme="light"] .tierGuideRow.tier-master.active {
+  background: rgba(160, 100, 30, 0.1);
+  border-color: rgba(160, 100, 30, 0.4);
+}
+:root[data-theme="light"] .tierGuideRow.tier-expert.active {
+  background: rgba(45, 110, 14, 0.1);
+  border-color: rgba(45, 110, 14, 0.4);
+}
+:root[data-theme="light"] .tierGuideRow.tier-advanced.active {
+  background: rgba(30, 80, 180, 0.08);
+  border-color: rgba(30, 80, 180, 0.35);
+}
+:root[data-theme="light"] .tierGuideRow.tier-player.active {
+  background: rgba(120, 75, 40, 0.1);
+  border-color: rgba(120, 75, 40, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ♟  LANDING PAGE — CHESS BYTE CABINET
+═══════════════════════════════════════════════════════ */
+
+.landingRoot {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  background: linear-gradient(160deg, rgba(8, 6, 3, 1) 0%, rgba(18, 14, 8, 1) 60%, rgba(12, 10, 5, 1) 100%);
+}
+
+/* Ambient floating pieces */
+.landingAmbient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.ambientPiece {
+  position: absolute;
+  color: rgba(212, 175, 55, 0.07);
+  user-select: none;
+  animation: ambientFloat linear infinite;
+}
+@keyframes ambientFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.05;
+  }
+  25% {
+    transform: translateY(-18px) rotate(90deg);
+    opacity: 0.09;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.07;
+  }
+  75% {
+    transform: translateY(-12px) rotate(270deg);
+    opacity: 0.09;
+  }
+  100% {
+    transform: translateY(0) rotate(360deg);
+    opacity: 0.05;
+  }
+}
+
+/* ── Header ── */
+.landingHeader {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+  background: rgba(8, 6, 3, 0.6);
+  backdrop-filter: blur(12px);
+}
+.landingBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.landingBrandPiece {
+  font-size: 32px;
+  animation: brandPiecePulse 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+}
+@keyframes brandPiecePulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+  }
+  50% {
+    transform: scale(1.08) rotate(-5deg);
+    filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.8));
+  }
+}
+.landingBrandName {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+  background: linear-gradient(90deg, #2f2d28, #d05a19 40%, #cd895b 70%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+.landingBrandTagline {
+  font-size: 11px;
+  color: rgba(245, 242, 230, 0.4);
+  letter-spacing: 0.06em;
+}
+.landingHeaderNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Hero ── */
+.landingHero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 26px 32px 31px;
+  flex-wrap: wrap;
+}
+.landingHeroLeft {
+  flex: 1 1 340px;
+  max-width: 520px;
+}
+.landingHeroEyebrow {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: rgba(212, 175, 55, 0.75);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.landingHeroTitle {
+  font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+  font-size: clamp(44px, 6vw, 80px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 0.04em;
+  margin: 0 0 20px;
+  background: linear-gradient(135deg, #f5e27a 0%, #d4af37 30%, #fff8e8 60%, #c8a020 80%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s linear infinite;
+}
+.landingHeroSub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(245, 242, 230, 0.6);
+  margin: 0 0 32px;
+  max-width: 48ch;
+}
+.landingHeroBtns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.landingHeroBtn {
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 8px;
+}
+
+/* ── Carousel ── */
+.landingCarouselWrap {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.carouselViewport {
+  width: 320px;
+  height: 370px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carouselPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: absolute;
+}
+.carouselEnter {
+  animation: carouselSlideIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.carouselExit {
+  animation: carouselSlideOut 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes carouselSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+@keyframes carouselSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.96);
+  }
+}
+
+/* 3D Chess Board */
+.board3DPerspective {
+  perspective: 700px;
+  perspective-origin: 50% 35%;
+}
+.board3DGrid {
+  display: grid;
+  grid-template-columns: repeat(8, 30px);
+  grid-template-rows: repeat(8, 30px);
+  transform: rotateX(28deg) rotateZ(-4deg);
+  transform-style: preserve-3d;
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  border-radius: 4px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(212, 175, 55, 0.1),
+    inset 0 0 20px rgba(0, 0, 0, 0.5);
+  transition: transform 0.5s ease;
+}
+.board3DGrid:hover {
+  transform: rotateX(12deg) rotateZ(-2deg);
+}
+.boardCell {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bcLight {
+  background: rgba(212, 175, 55, 0.18);
+}
+.bcDark {
+  background: rgba(10, 8, 4, 0.75);
+}
+.boardPiece {
+  font-size: 18px;
+  line-height: 1;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+/* Piece animations */
+.bp-pieceBob {
+  animation: pieceBob 1.8s ease-in-out infinite;
+}
+.bp-pieceHop {
+  animation: pieceHop 1.4s ease-in-out infinite;
+}
+.bp-piecePulse {
+  animation: piecePulse 2s ease-in-out infinite;
+}
+.bp-kingMove {
+  animation: kingMove 2.5s ease-in-out infinite;
+}
+.bp-rookSlide {
+  animation: rookSlide 2s ease-in-out infinite;
+}
+.bp-bishopDiag {
+  animation: bishopDiag 2.2s ease-in-out infinite;
+}
+.bp-checkGlow {
+  animation: checkGlow 1.5s ease-in-out infinite;
+}
+.bp-queenSweep {
+  animation: queenSweep 2s ease-in-out infinite;
+}
+
+@keyframes pieceBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@keyframes pieceHop {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(4px, -8px) scale(1.1);
+  }
+  50% {
+    transform: translate(0, -3px) scale(1.05);
+  }
+  75% {
+    transform: translate(-4px, -8px) scale(1.1);
+  }
+}
+@keyframes piecePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  }
+  50% {
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 12px currentColor);
+  }
+}
+@keyframes kingMove {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  30% {
+    transform: translate(4px, -3px) rotate(5deg);
+  }
+  60% {
+    transform: translate(-4px, -3px) rotate(-5deg);
+  }
+}
+@keyframes rookSlide {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  80% {
+    transform: translateX(-6px);
+  }
+}
+@keyframes bishopDiag {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(5px, -5px);
+  }
+  66% {
+    transform: translate(-5px, -5px);
+  }
+}
+@keyframes checkGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px rgba(255, 50, 50, 0.6));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 50, 50, 1));
+    transform: scale(1.15);
+  }
+}
+@keyframes queenSweep {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(6px, -4px) rotate(8deg);
+  }
+  50% {
+    transform: translate(0, -7px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-6px, -4px) rotate(-8deg);
+  }
+}
+
+/* Carousel caption */
+.carouselCaption {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.carouselCaptionTitle {
+  font-size: 18px;
+  font-weight: 800;
+  font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+  color: rgba(245, 242, 230, 0.95);
+  letter-spacing: 0.06em;
+}
+.carouselCaptionSub {
+  font-size: 13px;
+  color: rgba(245, 242, 230, 0.5);
+}
+
+/* Carousel dots */
+.carouselDots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+.carouselDotActive {
+  background: rgba(212, 175, 55, 0.8);
+  border-color: rgba(212, 175, 55, 0.8);
+  transform: scale(1.3);
+}
+.carouselDot:hover:not(.carouselDotActive) {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+/* ── Nav features ── */
+.landingNav {
+  position: relative;
+  z-index: 1;
+  padding: 48px 32px;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+}
+.landingNavTitle {
+  font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.08em;
+  color: rgba(245, 242, 230, 0.9);
+  margin: 0 0 32px;
+}
+.landingNavGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.landingNavCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 28px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-top: 2px solid rgba(212, 175, 55, 0.3);
+  background: rgba(24, 20, 12, 0.7);
+  text-decoration: none;
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+  backdrop-filter: blur(8px);
+}
+.landingNavCard:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 175, 55, 0.45);
+  border-top-color: rgba(212, 175, 55, 0.7);
+  background: rgba(36, 30, 16, 0.85);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(212, 175, 55, 0.1);
+}
+.landingNavPiece {
+  font-size: 42px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.4));
+  animation: navPieceSway 3s ease-in-out infinite;
+  transition:
+    transform 0.3s,
+    filter 0.3s;
+}
+.landingNavCard:hover .landingNavPiece {
+  transform: scale(1.2);
+  filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.7));
+  animation: none;
+}
+@keyframes navPieceSway {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-4deg) scale(1.02);
+  }
+  75% {
+    transform: rotate(4deg) scale(1.02);
+  }
+}
+.landingNavLabel {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: rgba(245, 242, 230, 0.95);
+  font-family: "Cinzel", "Palatino Linotype", Georgia, serif;
+}
+.landingNavDesc {
+  font-size: 12px;
+  color: rgba(245, 242, 230, 0.45);
+  line-height: 1.5;
+}
+
+/* ── Footer ── */
+.landingFooter {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: 20px 32px;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #f5f2e6;
+  background: #2b2924cc;
+}
+.landingFooterPiece {
+  font-size: 18px;
+  opacity: 0.5;
+}
+
+/* ── Light theme overrides ── */
+:root[data-theme="light"] .landingRoot {
+  background: linear-gradient(160deg, #f0e8d0 0%, #f8f3e5 60%, #ede4c8 100%);
+}
+:root[data-theme="light"] .landingHeader {
+  background: rgba(240, 234, 208, 0.8);
+  border-bottom-color: rgba(100, 80, 0, 0.15);
+}
+:root[data-theme="light"] .landingBrandTagline {
+  color: rgba(20, 16, 8, 0.45);
+}
+:root[data-theme="light"] .ambientPiece {
+  color: rgba(20, 16, 8, 0.05);
+}
+:root[data-theme="light"] .landingHeroTitle {
+  background: linear-gradient(135deg, #7a5c00 0%, #b8860b 35%, #4a3500 65%, #8a6800 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s linear infinite;
+}
+:root[data-theme="light"] .landingHeroSub {
+  color: rgba(20, 16, 8, 0.6);
+}
+:root[data-theme="light"] .landingHeroEyebrow {
+  color: rgba(100, 80, 0, 0.7);
+}
+:root[data-theme="light"] .landingNav {
+  background: rgba(240, 234, 208, 0.5);
+  border-top-color: rgba(100, 80, 0, 0.12);
+}
+:root[data-theme="light"] .landingNavTitle {
+  color: rgba(20, 16, 8, 0.9);
+}
+:root[data-theme="light"] .landingNavCard {
+  background: rgba(248, 243, 225, 0.8);
+  border-color: rgba(100, 80, 0, 0.15);
+  border-top-color: rgba(180, 140, 0, 0.35);
+}
+:root[data-theme="light"] .landingNavCard:hover {
+  background: rgba(255, 252, 240, 0.95);
+  border-color: rgba(180, 140, 0, 0.35);
+  border-top-color: rgba(180, 140, 0, 0.65);
+}
+:root[data-theme="light"] .landingNavLabel {
+  color: rgba(20, 16, 8, 0.9);
+}
+:root[data-theme="light"] .landingNavDesc {
+  color: rgba(20, 16, 8, 0.5);
+}
+:root[data-theme="light"] .landingFooter {
+  background: #d1c284e6;
+  border-top-color: #6450001f;
+  color: #000000ed;
+}
+:root[data-theme="light"] .bcLight {
+  background: rgba(212, 175, 55, 0.22);
+}
+:root[data-theme="light"] .bcDark {
+  background: rgba(100, 80, 20, 0.25);
+}
+:root[data-theme="light"] .carouselCaptionTitle {
+  color: rgba(20, 16, 8, 0.9);
+}
+:root[data-theme="light"] .carouselCaptionSub {
+  color: rgba(20, 16, 8, 0.5);
 }

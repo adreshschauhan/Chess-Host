@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { LogIn, LogOut, Menu, X } from "lucide-react";
 import { isAdmin, setAdminToken, setRole } from "../api";
 import ThemeToggle from "./ThemeToggle";
+import ChessScene from "./ChessScene";
 
 /** Chess piece icon — renders a Unicode chess symbol at icon size */
 function ChessPiece({ p, size = 18 }: { p: string; size?: number }) {
@@ -51,8 +52,8 @@ export default function AppShell({ title, subtitle, actions, children }: Props) 
         <div className="brand">
           <div className="brandIcon">♔</div>
           <div>
-            <div className="brandTitle">Chess Host</div>
-            <div className="brandSub">Swiss tournaments · Elo · Reports</div>
+            <div className="brandTitle">C-PAT CHESS ARENA</div>
+            <div className="brandSub">Chess tournaments · Elo · Reports</div>
           </div>
         </div>
 
@@ -104,6 +105,7 @@ export default function AppShell({ title, subtitle, actions, children }: Props) 
           </div>
         </header>
 
+        <ChessScene />
         <div className="content">{children}</div>
       </main>
     </div>

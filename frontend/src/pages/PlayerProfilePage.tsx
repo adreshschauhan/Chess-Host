@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch } from "../api";
 import AppShell from "../components/AppShell";
+import "./PlayersPage.css";
+
+const T_PAGE_SIZE = 5;
 
 type PlayerProfile = {
   player: { id: number; name: string; rating: number; createdAt: string };
@@ -22,6 +25,7 @@ export default function PlayerProfilePage() {
   const invalidId = !Number.isFinite(playerId);
 
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
+  const [tPage, setTPage] = useState(1);
   const [requestError, setRequestError] = useState<{ playerId: number; message: string } | null>(null);
 
   useEffect(() => {
@@ -33,6 +37,7 @@ export default function PlayerProfilePage() {
         const pr = await apiFetch<PlayerProfile>(`/api/players/${playerId}/profile`);
         if (cancelled) return;
         setProfile(pr);
+        setTPage(1);
         setRequestError(null);
       } catch (e) {
         if (cancelled) return;
@@ -53,8 +58,8 @@ export default function PlayerProfilePage() {
 
   return (
     <AppShell
-      title="Player Profile"
-      subtitle={displayedProfile ? displayedProfile.player.name : "Loading…"}
+      title="♟ Chess Cabinet"
+      subtitle="Player Profile"
       actions={
         <>
           <Link className="btn" to="/players">
@@ -71,41 +76,89 @@ export default function PlayerProfilePage() {
     >
       {error ? <div className="alert">{error}</div> : null}
 
-      {!displayedProfile ? (
-        <div className="card">Loading…</div>
-      ) : (
-        <div className="grid">
-          <section className="card">
-            <h2>{displayedProfile.player.name}</h2>
-            <div className="muted">Rating: {Math.round(displayedProfile.player.rating)}</div>
+      <div className="cabinet-layout" style={{ gridTemplateColumns: "1fr" }}>
+        <section className="cabinet-card cabinet-profile">
+          <div className="cabinet-card-header">
+            <span className="cabinet-crown">♛</span>
+            <h2 className="cabinet-title">Profile</h2>
+          </div>
 
-            <div className="card subcard" style={{ marginTop: 12 }}>
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <span className="badge">Games: {displayedProfile.summary.games}</span>
-                <span className="badge">W: {displayedProfile.summary.wins}</span>
-                <span className="badge">D: {displayedProfile.summary.draws}</span>
-                <span className="badge">L: {displayedProfile.summary.losses}</span>
-              </div>
+          {!displayedProfile ? (
+            <div className="cabinet-loading">
+              <span className="cabinet-spinner">♞</span> Loading profile…
             </div>
-          </section>
+          ) : (
+            <div className="cabinet-profile-body">
+              <div className="cabinet-profile-name">
+                <span className="cabinet-profile-piece">♔</span>
+                {displayedProfile.player.name}
+              </div>
+              <div className="cabinet-profile-rating">Rating: {Math.round(displayedProfile.player.rating)}</div>
 
-          <section className="card">
-            <h2>Tournament history</h2>
-            {displayedProfile.tournaments.length ? (
-              <ul>
-                {displayedProfile.tournaments.map((t) => (
-                  <li key={t.tournamentId}>
-                    <Link to={`/tournaments/${t.tournamentId}`}>{t.tournamentName}</Link> – score {t.score}
-                    {t.active ? " (active)" : ""}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="muted">No tournaments yet</div>
-            )}
-          </section>
-        </div>
-      )}
+              <div className="cabinet-stats-grid">
+                <div className="cabinet-stat">
+                  <span className="cabinet-stat-icon">♚</span>
+                  <span className="cabinet-stat-value">{displayedProfile.summary.games}</span>
+                  <span className="cabinet-stat-label">Games</span>
+                </div>
+                <div className="cabinet-stat cabinet-stat--win">
+                  <span className="cabinet-stat-icon">♔</span>
+                  <span className="cabinet-stat-value">{displayedProfile.summary.wins}</span>
+                  <span className="cabinet-stat-label">Wins</span>
+                </div>
+                <div className="cabinet-stat cabinet-stat--draw">
+                  <span className="cabinet-stat-icon">♞</span>
+                  <span className="cabinet-stat-value">{displayedProfile.summary.draws}</span>
+                  <span className="cabinet-stat-label">Draws</span>
+                </div>
+                <div className="cabinet-stat cabinet-stat--loss">
+                  <span className="cabinet-stat-icon">♟</span>
+                  <span className="cabinet-stat-value">{displayedProfile.summary.losses}</span>
+                  <span className="cabinet-stat-label">Losses</span>
+                </div>
+              </div>
+
+              <div className="cabinet-section-title">Tournament History</div>
+              {displayedProfile.tournaments.length ? (
+                <>
+                  <ul className="cabinet-tournament-list">
+                    {displayedProfile.tournaments.slice((tPage - 1) * T_PAGE_SIZE, tPage * T_PAGE_SIZE).map((t) => (
+                      <li key={t.tournamentId} className="cabinet-tournament-item">
+                        <Link to={`/tournaments/${t.tournamentId}`} className="cabinet-player-link">
+                          {t.tournamentName}
+                        </Link>
+                        <span className="cabinet-tournament-meta">
+                          Score: {t.score}
+                          {t.active ? " · active" : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {displayedProfile.tournaments.length > T_PAGE_SIZE && (
+                    <div className="cabinet-pagination cabinet-pagination--sm">
+                      <button className="cabinet-page-btn" onClick={() => setTPage((p) => Math.max(1, p - 1))} disabled={tPage === 1}>
+                        ‹ Prev
+                      </button>
+                      <span className="cabinet-page-info">
+                        {tPage} <span className="cabinet-page-sep">of</span> {Math.ceil(displayedProfile.tournaments.length / T_PAGE_SIZE)}
+                      </span>
+                      <button
+                        className="cabinet-page-btn"
+                        onClick={() => setTPage((p) => Math.min(Math.ceil(displayedProfile.tournaments.length / T_PAGE_SIZE), p + 1))}
+                        disabled={tPage === Math.ceil(displayedProfile.tournaments.length / T_PAGE_SIZE)}
+                      >
+                        Next ›
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="cabinet-muted">No tournaments yet</div>
+              )}
+            </div>
+          )}
+        </section>
+      </div>
     </AppShell>
   );
 }
