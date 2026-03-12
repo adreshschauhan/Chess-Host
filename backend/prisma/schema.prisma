@@ -26,6 +26,7 @@ model Tournament {
   rounds Int
   active Boolean @default(true)
   activeKey String? @unique @db.VarChar(16)
+  setupDone Boolean @default(false)
 
   participants TournamentPlayer[]
   roundsList   Round[]

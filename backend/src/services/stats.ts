@@ -5,7 +5,7 @@ export async function winningStreaks() {
     where: { active: false },
     orderBy: { id: "desc" },
   });
-  if (!t) return [] as Array<{ name: string; count: number }>;
+  if (!t) return [] as Array<{ name: string; count: number; tournamentId: number; tournamentName: string }>;
 
   const rounds = await prisma.round.findMany({
     where: { tournamentId: t.id },
@@ -49,7 +49,9 @@ export async function winningStreaks() {
     maxStreak = Math.max(maxStreak, best);
   }
 
-  return [...streaks.entries()].filter(([, s]) => s === maxStreak && s > 0).map(([name, count]) => ({ name, count }));
+  return [...streaks.entries()]
+    .filter(([, s]) => s === maxStreak && s > 0)
+    .map(([name, count]) => ({ name, count, tournamentId: t.id, tournamentName: t.name }));
 }
 
 export async function giantKillers() {
@@ -57,7 +59,7 @@ export async function giantKillers() {
     where: { active: false },
     orderBy: { id: "desc" },
   });
-  if (!t) return [] as string[];
+  if (!t) return [] as Array<{ name: string; tournamentId: number; tournamentName: string }>;
 
   const rounds = await prisma.round.findMany({
     where: { tournamentId: t.id },
@@ -79,5 +81,5 @@ export async function giantKillers() {
     }
   }
 
-  return [...killers];
+  return [...killers].map((name) => ({ name, tournamentId: t.id, tournamentName: t.name }));
 }

@@ -18,8 +18,11 @@ const upload = multer({
 
 const CreateTournamentSchema = z.object({
   name: z.string().trim().min(1),
-  rounds: z.number().int().positive().max(15),
 });
+
+function computeSwissRounds(n: number): number {
+  return Math.ceil(Math.log2(Math.max(n, 2)));
+}
 
 const ParticipantsSchema = z.object({
   players: z.array(z.string().trim().min(1)).min(2),
@@ -99,8 +102,16 @@ const SubmitResultsSchema = z.object({
   ),
 });
 
-function canGenerateRound(args: { tournamentActive: boolean; latestRoundLocked: boolean | null; roundsCreated: number; roundsTotal: number }) {
-  return args.tournamentActive && (args.roundsCreated === 0 || args.latestRoundLocked === true) && args.roundsCreated < args.roundsTotal;
+function canGenerateRound(args: {
+  tournamentActive: boolean;
+  setupDone: boolean;
+  latestRoundLocked: boolean | null;
+  roundsCreated: number;
+  roundsTotal: number;
+}) {
+  return (
+    args.tournamentActive && args.setupDone && (args.roundsCreated === 0 || args.latestRoundLocked === true) && args.roundsCreated < args.roundsTotal
+  );
 }
 
 // Active tournament
@@ -110,7 +121,7 @@ tournamentsRouter.get("/tournaments/active", async (_req, res, next) => {
     const active = await prisma.tournament.findFirst({
       where: { active: true },
       orderBy: { id: "desc" },
-      select: { id: true, name: true, rounds: true, active: true },
+      select: { id: true, name: true, rounds: true, active: true, setupDone: true },
     });
     res.json(active);
   } catch (e) {
@@ -130,7 +141,7 @@ tournamentsRouter.get("/tournaments", async (req, res, next) => {
       where,
       orderBy: { id: "desc" },
       take,
-      select: { id: true, name: true, rounds: true, active: true, createdAt: true },
+      select: { id: true, name: true, rounds: true, active: true, createdAt: true, setupDone: true },
     });
 
     res.json(tournaments);
@@ -146,12 +157,21 @@ tournamentsRouter.post("/tournaments", requireAdmin, async (req, res, next) => {
     const parsed = CreateTournamentSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: parsed.error.message });
 
+    // Duplicate name check (case-insensitive)
+    const existing = await prisma.tournament.findFirst({
+      where: { name: { equals: parsed.data.name } },
+      select: { id: true, active: true },
+    });
+    if (existing) {
+      return res.status(409).json({ error: `A tournament named "${parsed.data.name}" already exists` });
+    }
+
     const t = await prisma.tournament.create({
       data: {
         name: parsed.data.name,
-        rounds: parsed.data.rounds,
+        rounds: 0,
       },
-      select: { id: true, name: true, rounds: true, active: true },
+      select: { id: true, name: true, rounds: true, active: true, setupDone: true },
     });
 
     res.status(201).json(t);
@@ -169,7 +189,7 @@ tournamentsRouter.get("/tournaments/:id", async (req, res, next) => {
 
     const tournament = await prisma.tournament.findUnique({
       where: { id: tournamentId },
-      select: { id: true, name: true, rounds: true, active: true },
+      select: { id: true, name: true, rounds: true, active: true, setupDone: true },
     });
 
     if (!tournament) return res.status(404).json({ error: "Not found" });
@@ -202,6 +222,7 @@ tournamentsRouter.get("/tournaments/:id", async (req, res, next) => {
       tournament,
       canGenerateRound: canGenerateRound({
         tournamentActive: tournament.active,
+        setupDone: tournament.setupDone,
         latestRoundLocked: latestRound?.locked ?? null,
         roundsCreated: rounds.length,
         roundsTotal: tournament.rounds,
@@ -337,18 +358,45 @@ tournamentsRouter.get("/tournaments/:id/report", requireAdmin, async (req, res, 
   }
 });
 
-// Delete completed tournament
+// Delete completed tournament OR cancel a draft (setupDone = false) tournament
 
 tournamentsRouter.delete("/tournaments/:id", requireAdmin, async (req, res, next) => {
   try {
     const tournamentId = Number(req.params.id);
     if (!Number.isFinite(tournamentId)) return res.status(400).json({ error: "Invalid id" });
 
-    const t = await prisma.tournament.findUnique({ where: { id: tournamentId }, select: { active: true } });
+    const t = await prisma.tournament.findUnique({ where: { id: tournamentId }, select: { active: true, setupDone: true } });
     if (!t) return res.status(404).json({ error: "Not found" });
-    if (t.active) return res.status(400).json({ error: "Cannot delete an active tournament" });
+
+    // Allow delete if: tournament is completed (active=false) OR it's a draft (setupDone=false)
+    if (t.active && t.setupDone) {
+      return res.status(400).json({ error: "Cannot delete a started tournament. Complete it first." });
+    }
 
     await prisma.tournament.delete({ where: { id: tournamentId } });
+    res.json({ ok: true });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Finalize tournament setup (Start)
+
+tournamentsRouter.post("/tournaments/:id/start", requireAdmin, async (req, res, next) => {
+  try {
+    const tournamentId = Number(req.params.id);
+    if (!Number.isFinite(tournamentId)) return res.status(400).json({ error: "Invalid id" });
+
+    const t = await prisma.tournament.findUnique({ where: { id: tournamentId } });
+    if (!t) return res.status(404).json({ error: "Not found" });
+    if (!t.active) return res.status(400).json({ error: "Tournament is not active" });
+    if (t.setupDone) return res.status(400).json({ error: "Tournament already started" });
+
+    const participantCount = await prisma.tournamentPlayer.count({ where: { tournamentId } });
+    if (participantCount < 2) return res.status(400).json({ error: "At least 2 participants required before starting" });
+    if (t.rounds < 1) return res.status(400).json({ error: "Rounds must be set before starting" });
+
+    await prisma.tournament.update({ where: { id: tournamentId }, data: { setupDone: true } });
     res.json({ ok: true });
   } catch (e) {
     next(e);
@@ -394,7 +442,11 @@ tournamentsRouter.post("/tournaments/:id/participants", requireAdmin, async (req
       }
     });
 
-    res.json({ ok: true });
+    // Auto-compute rounds from Swiss rule (ceil(log2(n)))
+    const suggestedRounds = computeSwissRounds(uniqueNames.length);
+    await prisma.tournament.update({ where: { id: tournamentId }, data: { rounds: suggestedRounds } });
+
+    res.json({ ok: true, rounds: suggestedRounds });
   } catch (e) {
     next(e);
   }
@@ -449,7 +501,49 @@ tournamentsRouter.post("/tournaments/:id/participants/import", requireAdmin, upl
       }
     });
 
-    res.json({ ok: true, count: names.length, mode });
+    // Re-count total participants (append may add to existing)
+    const totalCount = await prisma.tournamentPlayer.count({ where: { tournamentId } });
+    const suggestedRounds = computeSwissRounds(totalCount);
+    // Only expand rounds (never shrink) when appending; always set on replace
+    if (mode === "replace" || suggestedRounds > t.rounds) {
+      await prisma.tournament.update({ where: { id: tournamentId }, data: { rounds: suggestedRounds } });
+    }
+
+    res.json({ ok: true, count: names.length, mode, rounds: suggestedRounds });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Adjust rounds count (admin, before any round is generated)
+
+tournamentsRouter.put("/tournaments/:id", requireAdmin, async (req, res, next) => {
+  try {
+    const tournamentId = Number(req.params.id);
+    if (!Number.isFinite(tournamentId)) return res.status(400).json({ error: "Invalid id" });
+
+    const roundsVal = Number((req.body as { rounds?: unknown }).rounds);
+    if (!Number.isInteger(roundsVal) || roundsVal < 1) {
+      return res.status(400).json({ error: "rounds must be a positive integer" });
+    }
+
+    const t = await prisma.tournament.findUnique({ where: { id: tournamentId } });
+    if (!t) return res.status(404).json({ error: "Not found" });
+    if (!t.active) return res.status(400).json({ error: "Tournament is not active" });
+
+    const roundsCreated = await prisma.round.count({ where: { tournamentId } });
+    if (roundsCreated > 0) return res.status(400).json({ error: "Cannot change rounds after tournament has started" });
+
+    const participantCount = await prisma.tournamentPlayer.count({ where: { tournamentId } });
+    if (participantCount < 2) return res.status(400).json({ error: "Add at least 2 participants before setting rounds" });
+
+    const minRounds = computeSwissRounds(participantCount);
+    if (roundsVal < minRounds) {
+      return res.status(400).json({ error: `Minimum ${minRounds} rounds required for fair Swiss play with ${participantCount} participants` });
+    }
+
+    await prisma.tournament.update({ where: { id: tournamentId }, data: { rounds: roundsVal } });
+    res.json({ ok: true, rounds: roundsVal });
   } catch (e) {
     next(e);
   }
@@ -477,6 +571,7 @@ tournamentsRouter.post("/tournaments/:id/rounds", requireAdmin, async (req, res,
     if (
       !canGenerateRound({
         tournamentActive: tournament.active,
+        setupDone: tournament.setupDone,
         latestRoundLocked: latestRound?.locked ?? null,
         roundsCreated,
         roundsTotal: tournament.rounds,

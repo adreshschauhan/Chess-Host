@@ -8,26 +8,38 @@ playersRouter.get("/players", async (req, res, next) => {
     const page = Math.max(1, parseInt(String(req.query.page ?? "1"), 10) || 1);
     const limit = Math.min(200, Math.max(0, parseInt(String(req.query.limit ?? "0"), 10) || 0));
 
-    const total = await prisma.player.count();
-
-    const players = await prisma.player.findMany({
-      orderBy: { rating: "desc" },
-      select: { id: true, name: true, rating: true },
-      ...(limit > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
-    });
+    const [total, players] = await Promise.all([
+      prisma.player.count(),
+      prisma.player.findMany({
+        orderBy: { rating: "desc" },
+        select: { id: true, name: true, rating: true },
+        ...(limit > 0 ? { skip: (page - 1) * limit, take: limit } : {}),
+      }),
+    ]);
 
     // If no pagination requested, return plain array (backwards-compatible)
     if (limit === 0) return res.json(players);
 
-    res.json({ players, total, page, limit, totalPages: Math.ceil(total / limit) });
+    res.json({ players, total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) });
   } catch (e) {
     next(e);
   }
 });
 
-playersRouter.get("/players/stats", async (_req, res, next) => {
+playersRouter.get("/players/stats", async (req, res, next) => {
   try {
-    const players = await prisma.player.findMany({
+    const page = Math.max(1, parseInt(String(req.query.page ?? "1"), 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(String(req.query.limit ?? "10"), 10) || 10));
+    const search = String(req.query.search ?? "")
+      .trim()
+      .toLowerCase();
+    const tiersRaw = String(req.query.tiers ?? "").trim();
+    const tiers = tiersRaw ? tiersRaw.split(",").filter(Boolean) : [];
+    const sortBy = String(req.query.sortBy ?? "rating");
+    const minGames = Math.max(0, parseInt(String(req.query.minGames ?? "0"), 10) || 0);
+
+    // All players sorted by rating — defines global rank
+    const allPlayers = await prisma.player.findMany({
       orderBy: { rating: "desc" },
       select: { id: true, name: true, rating: true },
     });
@@ -37,36 +49,93 @@ playersRouter.get("/players/stats", async (_req, res, next) => {
       select: { p1Id: true, p2Id: true, result: true },
     });
 
-    const stats = new Map<number, { games: number; wins: number; draws: number; losses: number }>();
-    for (const p of players) stats.set(p.id, { games: 0, wins: 0, draws: 0, losses: 0 });
+    const statsMap = new Map<number, { games: number; wins: number; draws: number; losses: number }>();
+    for (const p of allPlayers) statsMap.set(p.id, { games: 0, wins: 0, draws: 0, losses: 0 });
 
     for (const m of matches) {
       if (m.result === null) continue;
-      const s1 = stats.get(m.p1Id);
-      const s2 = stats.get(m.p2Id);
+      const s1 = statsMap.get(m.p1Id);
+      const s2 = statsMap.get(m.p2Id);
       if (!s1 || !s2) continue;
-
-      s1.games += 1;
-      s2.games += 1;
-
+      s1.games++;
+      s2.games++;
       if (m.result === 0) {
-        s1.draws += 1;
-        s2.draws += 1;
+        s1.draws++;
+        s2.draws++;
       } else if (m.result === 1) {
-        s1.wins += 1;
-        s2.losses += 1;
+        s1.wins++;
+        s2.losses++;
       } else {
-        s1.losses += 1;
-        s2.wins += 1;
+        s1.losses++;
+        s2.wins++;
       }
     }
 
-    res.json(
-      players.map((p) => ({
-        ...p,
-        ...stats.get(p.id)!,
-      })),
-    );
+    function getTier(rank: number): string {
+      if (rank === 1) return "grandmaster";
+      if (rank === 2) return "elite";
+      if (rank <= 4) return "master";
+      if (rank <= 7) return "expert";
+      if (rank <= 11) return "advanced";
+      return "player";
+    }
+
+    const TIER_LABELS: Record<string, string> = {
+      grandmaster: "♔  Grand Master",
+      elite: "♕  Elite",
+      master: "♖  Master",
+      expert: "♗  Expert",
+      advanced: "♘  Advanced",
+      player: "♙  Player",
+    };
+
+    const TIER_PIECES: Record<string, string> = {
+      grandmaster: "♔",
+      elite: "♕",
+      master: "♖",
+      expert: "♗",
+      advanced: "♘",
+      player: "♙",
+    };
+
+    // Enrich with global rank, tier, computed stats
+    let enriched = allPlayers.map((p, idx) => {
+      const rank = idx + 1;
+      const tier = getTier(rank);
+      const s = statsMap.get(p.id)!;
+      const winRate = s.games > 0 ? Math.round((s.wins / s.games) * 100) : 0;
+      return {
+        id: p.id,
+        name: p.name,
+        rating: p.rating,
+        rank,
+        tier,
+        tierLabel: TIER_LABELS[tier],
+        piece: TIER_PIECES[tier],
+        games: s.games,
+        wins: s.wins,
+        draws: s.draws,
+        losses: s.losses,
+        winRate,
+      };
+    });
+
+    // Apply filters
+    if (search) enriched = enriched.filter((p) => p.name.toLowerCase().includes(search));
+    if (tiers.length) enriched = enriched.filter((p) => tiers.includes(p.tier));
+    if (minGames > 0) enriched = enriched.filter((p) => p.games >= minGames);
+
+    // Sort
+    if (sortBy === "winrate") enriched.sort((a, b) => b.winRate - a.winRate || b.rating - a.rating);
+    else if (sortBy === "games") enriched.sort((a, b) => b.games - a.games || b.rating - a.rating);
+    else if (sortBy === "wins") enriched.sort((a, b) => b.wins - a.wins || b.rating - a.rating);
+    // default "rating" already sorted
+
+    const total = enriched.length;
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+    const players = enriched.slice((page - 1) * limit, page * limit);
+
+    res.json({ players, total, page, limit, totalPages });
   } catch (e) {
     next(e);
   }
