@@ -2,9 +2,9 @@
 #!/bin/bash
 
 # Set your domain and email here
-DOMAIN="cpatchessarena.in"
-DOMAIN_ALT="www.cpatchessarena.in"
-EMAIL="admin@cpatchessarena.in"
+DOMAIN="chessclub.patna.cdac.in"
+DOMAIN_ALT="www.chessclub.patna.cdac.in"
+EMAIL="admin@patna.cdac.in"
 CERT_PATH="./certbot/conf"
 
 # Colors for output
@@ -51,6 +51,17 @@ else
             --self-signed \
             --domains "$DOMAIN,$DOMAIN_ALT" \
             --force-renewal 2>/dev/null || true
+
+        if [ ! -f "$CERT_PATH/live/$DOMAIN/fullchain.pem" ]; then
+            echo -e "${YELLOW}Certbot self-signed fallback did not create files. Generating local OpenSSL certificate...${NC}"
+            mkdir -p "$CERT_PATH/live/$DOMAIN"
+            openssl req -x509 -nodes -newkey rsa:2048 -days 30 \
+                -keyout "$CERT_PATH/live/$DOMAIN/privkey.pem" \
+                -out "$CERT_PATH/live/$DOMAIN/fullchain.pem" \
+                -subj "/C=IN/ST=Bihar/L=Patna/O=CDAC/CN=$DOMAIN" >/dev/null 2>&1
+            chmod 600 "$CERT_PATH/live/$DOMAIN/privkey.pem"
+            chmod 644 "$CERT_PATH/live/$DOMAIN/fullchain.pem"
+        fi
     fi
 fi
 

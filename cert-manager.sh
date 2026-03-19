@@ -5,9 +5,9 @@
 
 set -e
 
-DOMAIN="cpatchessarena.in"
-DOMAIN_ALT="www.cpatchessarena.in"
-EMAIL="admin@cpatchessarena.in"
+DOMAIN="chessclub.patna.cdac.in"
+DOMAIN_ALT="www.chessclub.patna.cdac.in"
+EMAIL="admin@patna.cdac.in"
 CERT_PATH="./certbot/conf"
 
 # Colors
@@ -102,8 +102,12 @@ update_domain() {
     
     if [ -n "$new_domain" ]; then
         echo "Updating domain from ${DOMAIN} to ${new_domain}..."
-        sed -i "s/${DOMAIN}/${new_domain}/g" nginx/nginx.conf init-letsencrypt.sh
+        local new_alt="www.${new_domain}"
+        local old_alt="${DOMAIN_ALT}"
+        sed -i "s/${DOMAIN}/${new_domain}/g" nginx/nginx.conf init-letsencrypt.sh cert-manager.sh .env
+        sed -i "s/${old_alt}/${new_alt}/g" init-letsencrypt.sh cert-manager.sh
         DOMAIN="${new_domain}"
+        DOMAIN_ALT="${new_alt}"
         echo -e "${GREEN}✓ Domain updated to ${DOMAIN}${NC}"
         echo -e "${YELLOW}Run './cert-manager.sh init' to get certificates for the new domain${NC}"
     fi

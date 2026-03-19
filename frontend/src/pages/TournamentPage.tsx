@@ -56,6 +56,9 @@ export default function TournamentPage() {
   const [adjustedRounds, setAdjustedRounds] = useState(0);
   const [savingRounds, setSavingRounds] = useState(false);
 
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showStartModal, setShowStartModal] = useState(false);
+
   const admin = isAdmin();
 
   const [showCelebration, setShowCelebration] = useState(false);
@@ -157,7 +160,12 @@ export default function TournamentPage() {
   }
 
   async function generateRound() {
+    setShowGenerateModal(true);
+  }
+
+  async function confirmGenerateRound() {
     setError("");
+    setShowGenerateModal(false);
     try {
       await apiFetch(`/api/tournaments/${tournamentId}/rounds`, { method: "POST", body: JSON.stringify({}) });
       await load();
@@ -191,7 +199,6 @@ export default function TournamentPage() {
   }
 
   async function finalizeSetup() {
-    if (!confirm("Start this tournament? Participants will be locked in.")) return;
     setFinalizing(true);
     setError("");
     try {
@@ -255,6 +262,21 @@ export default function TournamentPage() {
   const { tournament, participants, rounds } = data;
   const hasRounds = rounds.length > 0;
   const isDraft = !tournament.setupDone;
+
+  function openStartModal() {
+    setShowStartModal(true);
+  }
+
+  function closeStartModal() {
+    if (finalizing) return;
+    setShowStartModal(false);
+  }
+
+  async function confirmStartTournament() {
+    if (finalizing) return;
+    setShowStartModal(false);
+    await finalizeSetup();
+  }
 
   return (
     <AppShell
@@ -463,7 +485,7 @@ export default function TournamentPage() {
 
           {/* Final Submit — shown when setup is ready but not yet started */}
           {admin && isDraft && tournament.active && participants.length >= 2 && tournament.rounds > 0 ? (
-            <button type="button" className="btn finalSubmitBtn" onClick={() => void finalizeSetup()} disabled={finalizing}>
+            <button type="button" className="btn finalSubmitBtn" onClick={openStartModal} disabled={finalizing}>
               {finalizing ? "Starting…" : "✓ Final Submit — Start Tournament"}
             </button>
           ) : null}
@@ -505,23 +527,90 @@ export default function TournamentPage() {
 
           <div className="stack" style={{ marginTop: 12 }}>
             {rounds.map((r) => (
-              <RoundCard key={r.id} round={r} canEdit={tournament.active && !r.locked && admin} onSubmit={submitResults} />
+              <RoundCard key={r.id} round={r} totalRounds={tournament.rounds} canEdit={tournament.active && !r.locked && admin} onSubmit={submitResults} />
             ))}
           </div>
         </section>
       </div>
 
       {showCelebration && <CelebrationModal tournament={tournament} participants={participants} onClose={() => setShowCelebration(false)} />}
+      {data && showGenerateModal && (
+        <GenerateRoundModal
+          currentRound={data.rounds.length + 1}
+          totalRounds={data.tournament.rounds}
+          onConfirm={confirmGenerateRound}
+          onCancel={() => setShowGenerateModal(false)}
+        />
+      )}
+      {showStartModal && (
+        <StartTournamentModal
+          onConfirm={() => void confirmStartTournament()}
+          onCancel={closeStartModal}
+          loading={finalizing}
+          totalRounds={tournament.rounds}
+          participantsCount={participants.length}
+        />
+      )}
     </AppShell>
+  );
+}
+
+function StartTournamentModal({
+  onConfirm,
+  onCancel,
+  loading,
+  totalRounds,
+  participantsCount,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading: boolean;
+  totalRounds: number;
+  participantsCount: number;
+}) {
+  return (
+    <div className="modalOverlay" onClick={onCancel}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modalHeader">
+          <h2>Start Tournament</h2>
+          <button className="modalClose" onClick={onCancel} disabled={loading}>
+            ✕
+          </button>
+        </div>
+        <div className="modalBody">
+          <p style={{ marginBottom: 8 }}>Start this tournament now?</p>
+          <p className="muted">Participants will be locked in and cannot be changed after starting.</p>
+          <div style={{padding: "12px 14px", borderRadius: "8px", marginTop: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+              <span className="muted">Total Rounds</span>
+              <strong>{totalRounds}</strong>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span className="muted">Participants</span>
+              <strong>{participantsCount}</strong>
+            </div>
+          </div>
+        </div>
+        <div className="modalFooter">
+          <button className="btn" onClick={onCancel} disabled={loading}>
+            Cancel
+          </button>
+          <button className="btn primary" onClick={onConfirm} disabled={loading}>
+            {loading ? "Starting…" : "Start Tournament"}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
 function RoundCard(props: {
   round: Round;
+  totalRounds: number;
   canEdit: boolean;
   onSubmit: (round: Round, results: Array<{ matchId: number; result: number }>) => Promise<void>;
 }) {
-  const { round, canEdit, onSubmit } = props;
+  const { round, totalRounds, canEdit, onSubmit } = props;
   const [local, setLocal] = useState(() => new Map<number, number>());
 
   useEffect(() => {
@@ -542,7 +631,7 @@ function RoundCard(props: {
   return (
     <div className="card subcard">
       <div className="row">
-        <h3>Round {round.roundNumber}</h3>
+        <h3>Round {round.roundNumber}/{totalRounds}</h3>
         <span className={round.locked ? "badge done" : "badge active"}>{round.locked ? "Locked" : "Open"}</span>
       </div>
 
@@ -615,6 +704,64 @@ const CONFETTI_DATA = Array.from({ length: 70 }, (_, i) => ({
   height: 8 + (i % 3) * 4,
   round: i % 5 === 0,
 }));
+
+function GenerateRoundModal({
+  currentRound,
+  totalRounds,
+  onConfirm,
+  onCancel,
+}: {
+  currentRound: number;
+  totalRounds: number;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="modalOverlay" onClick={onCancel}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modalHeader">
+          <h2>Generate Round</h2>
+          <button className="modalClose" onClick={onCancel}>
+            ✕
+          </button>
+        </div>
+        <div className="modalBody">
+          <div style={{ textAlign: "center", padding: "24px" }}>
+            <div style={{ fontSize: "32px", marginBottom: "16px", color: "#8b4513" }}>♟</div>
+            <h3 style={{ marginBottom: "8px" }}>Round {currentRound} of {totalRounds}</h3>
+            <p className="muted" style={{ marginBottom: "24px" }}>
+              Generate the next round with Swiss pairings
+            </p>
+            <div style={{ background: "#f5f5f5", padding: "16px", borderRadius: "6px", marginBottom: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "24px", fontWeight: "bold", color: "black" }}>{currentRound}</div>
+                  <div className="muted" style={{ fontSize: "12px", color: "black" }}>Current</div>
+                </div>
+                <div style={{ fontSize: "18px", color: "#999" }}>→</div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "24px", fontWeight: "bold", color: "black" }}>{totalRounds}</div>
+                  <div className="muted" style={{ fontSize: "12px" }}>Total</div>
+                </div>
+              </div>
+            </div>
+            <div className="muted" style={{ fontSize: "12px", marginBottom: "24px", color: "black" }}>
+              {currentRound === totalRounds ? "This is the final round" : `${totalRounds - currentRound} round${totalRounds - currentRound === 1 ? "" : "s"} remaining`}
+            </div>
+          </div>
+        </div>
+        <div className="modalFooter">
+          <button className="btn" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="btn primary" onClick={onConfirm}>
+            Generate Round
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const PODIUM_ICONS = ["♔", "♕", "♖"];
 const PODIUM_CLASS = ["rankGold", "rankSilver", "rankBronze"];
